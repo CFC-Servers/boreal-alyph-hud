@@ -39,7 +39,7 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 end
 
 function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
-
+	return x, y
 end
 
 function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
