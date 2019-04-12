@@ -39,7 +39,52 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 end
 
 function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
-	return x, y
+	surface.SetFont(self.AmmoCounterReady.REGULAR)
+	local clip2, ammo2 = self:GetDisplayClip2(), self:GetDisplayAmmo2()
+	surface.SetTextColor(self.AmmoColor)
+	local barWidth = ScreenSize(40) -- Althrough there is no bar in gmod, we still use this for padding
+	-- scratch that, we got clip
+
+	if not self:ShouldDisplaySecondaryAmmoReady() and self:ShouldDisplayAmmoStored2() then
+		local w1, h1 = surface.GetTextSize(ammo2)
+		local totalWidth = w1
+
+		surface.SetTextPos(x - w1, y)
+		surface.DrawText(ammo2)
+
+		barWidth = barWidth:max(totalWidth)
+
+		surface.SetDrawColor(ammo2 > 0 and self.AmmoColor or self.AmmoColor * 50)
+		surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
+
+		return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
+	end
+
+	ammo2 = '/' .. ammo2
+
+	local barWidth = ScreenSize(40)
+	local w1, h1 = surface.GetTextSize(clip2)
+	local totalWidth = w1
+	surface.SetFont(self.AmmoCounterStored.REGULAR)
+	local w2, h2 = surface.GetTextSize(ammo2)
+
+	totalWidth = totalWidth + w2
+
+	surface.SetTextPos(x - totalWidth + w1, y + h1 - h2)
+	surface.DrawText(ammo2)
+
+	surface.SetFont(self.AmmoCounterReady.REGULAR)
+	surface.SetTextPos(x - totalWidth, y)
+	surface.DrawText(clip2)
+
+	barWidth = barWidth:max(totalWidth)
+
+	surface.SetDrawColor(self.AmmoColor * 50)
+	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
+	surface.SetDrawColor(self.AmmoColor)
+	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth * self:GetAmmoFillage2(), ScreenSize(self.BAR_DEF_HEIGHT))
+
+	return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
 end
 
 function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)

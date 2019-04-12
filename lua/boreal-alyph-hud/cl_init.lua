@@ -67,9 +67,10 @@ BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = 65
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = 90
 BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 6
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
+BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14
 
 function BOREAL_ALYPH_HUD:HUDShouldDraw(str)
-	if str == 'CHudAmmo' or str == 'CHudBattery' or str == 'CHudHealth' then return false end
+	if str == 'CHudAmmo' or str == 'CHudBattery' or str == 'CHudHealth' or str == 'CHudSecondaryAmmo' then return false end
 end
 
 BOREAL_ALYPH_HUD:AddHook('HUDShouldDraw')
