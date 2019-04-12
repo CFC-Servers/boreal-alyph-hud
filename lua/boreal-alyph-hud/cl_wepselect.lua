@@ -66,25 +66,32 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 	for i = 1, 6 do
 		if self:GetActiveSlot() == i and not deny then
 			local y = y
+			local yo = y
 
 			for i2 = scrollStart, scrollEnd do
 				local weapon = self.WeaponListInSlot[i2]
 
-				surface.SetDrawColor(self:GetActiveWeaponPos() == i2 and active or inactive)
-				surface.DrawRect(x, y, aSquareW, aSquareH)
+				if self:GetActiveWeaponPos() == i2 then
+					surface.SetDrawColor(active)
+					surface.DrawRect(x, y, aSquareW, aSquareH)
 
-				if weapon.DrawWeaponSelection then
 					weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 3, aSquareH - inpadding * 3, alpha)
+					y = y + ypadding + aSquareH
+				else
+					surface.SetDrawColor(inactive)
+					surface.DrawRect(x, y, aSquareW, inaSquareH)
+
+					y = y + ypadding + inaSquareH
 				end
 
-				y = y + ypadding + aSquareH
+				-- Note to Boreal Alyph Developers: as for me, this number looks good here
+				if i2 == scrollStart and self:GetActiveWeaponPos() ~= i2 then
+					surface.SetFont(self.SelectorSmallNumbers.REGULAR)
+					surface.SetTextColor(active)
+					surface.SetTextPos(x + inpadding, yo + inpadding)
+					surface.DrawText(i)
+				end
 			end
-
-			-- Note to Boreal Alyph Developers: this number looks good when it is there
-			-- but oh well
-			--[[surface.SetTextColor(self.SelectorColorInactive)
-			surface.SetTextPos(x + inpadding, y + inpadding)
-			surface.DrawText(i)]]
 
 			x = x + ScreenSize(self.SELECTOR_SQUARE_ACTIVE_W) + padding
 		else
