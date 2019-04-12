@@ -70,7 +70,7 @@ function BOREAL_ALYPH_HUD:PaintArmor(x, y)
 
 	local w, h = surface.GetTextSize('*')
 
-	surface.SetTextColor(self.HealthColor)
+	surface.SetTextColor(self.ArmorColor)
 
 	surface.SetTextPos(x, y)
 	surface.DrawText('*')

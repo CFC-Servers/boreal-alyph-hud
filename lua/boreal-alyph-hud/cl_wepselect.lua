@@ -83,7 +83,7 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 					surface.SetDrawColor(active)
 					surface.DrawRect(x, y, aSquareW, aSquareH)
 
-					weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 3, aSquareH - inpadding * 3, alpha)
+					weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 2, aSquareH - inpadding * 2, alpha)
 					y = y + ypadding + aSquareH
 				else
 					surface.SetDrawColor(inactive)

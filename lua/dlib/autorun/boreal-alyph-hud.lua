@@ -23,6 +23,7 @@ if SERVER then
 	AddCSLuaFile('boreal-alyph-hud/cl_init.lua')
 	AddCSLuaFile('boreal-alyph-hud/cl_ammo.lua')
 	AddCSLuaFile('boreal-alyph-hud/cl_wepselect.lua')
+	AddCSLuaFile('boreal-alyph-hud/cl_sweetfx.lua')
 	return
 end
 
@@ -30,3 +31,4 @@ include('boreal-alyph-hud/cl_init.lua')
 include('boreal-alyph-hud/cl_health.lua')
 include('boreal-alyph-hud/cl_ammo.lua')
 include('boreal-alyph-hud/cl_wepselect.lua')
+include('boreal-alyph-hud/cl_sweetfx.lua')
