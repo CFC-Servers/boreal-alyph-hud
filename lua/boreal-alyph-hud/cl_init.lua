@@ -58,6 +58,18 @@ BOREAL_ALYPH_HUD.AmmoCounterStored = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCo
 	weight = 500
 })
 
+BOREAL_ALYPH_HUD.SelectorSmallNumbers = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorSmallNumbers', {
+	font = 'Alte DIN 1451 Mittelschrift',
+	size = 14,
+	weight = 500
+})
+
+BOREAL_ALYPH_HUD.SelectorNames = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorNames', {
+	font = 'Alte DIN 1451 Mittelschrift',
+	size = 18,
+	weight = 500
+})
+
 BOREAL_ALYPH_HUD.HealthColor = Color(255, 176, 0, 160)
 BOREAL_ALYPH_HUD.CriticalHealthColor = Color(135, 25, 25)
 BOREAL_ALYPH_HUD.ArmorColor = Color(255, 176, 0, 160)
