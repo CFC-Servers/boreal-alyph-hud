@@ -21,6 +21,8 @@
 local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
 local surface = surface
 local ScreenSize = ScreenSize
+local draw = draw
+local TEXT_ALIGN_CENTER = TEXT_ALIGN_CENTER
 
 BOREAL_ALYPH_HUD.SelectorColorActive = Color(255, 176, 0, 160)
 BOREAL_ALYPH_HUD.SelectorColorInactive = Color(255, 176, 0, 160) * 160
@@ -37,6 +39,12 @@ BOREAL_ALYPH_HUD.SELECTOR_SQUARE_ACTIVE_W = 120
 BOREAL_ALYPH_HUD.SELECTOR_SQUARE_ACTIVE_H = 70
 
 local POS_SELECTOR = BOREAL_ALYPH_HUD:DefineStaticPosition('wepselect', 0.5, 0.06)
+
+local function getPrintName(self)
+	local class = self:GetClass()
+	local phrase = language.GetPhrase(class)
+	return phrase ~= class and phrase or self:GetPrintName()
+end
 
 function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 	if not self:ShouldDrawWeaponSelection() then return end
@@ -80,6 +88,16 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 				else
 					surface.SetDrawColor(inactive)
 					surface.DrawRect(x, y, aSquareW, inaSquareH)
+
+					--surface.SetTextColor(active)
+					surface.SetFont(self.SelectorWeaponName.REGULAR)
+					local text = getPrintName(weapon)
+					local tw, th = surface.GetTextSize(text)
+
+					--surface.SetTextPos(x + aSquareW / 2 - tw / 2, y + inaSquareH / 2 - th / 2)
+
+					--surface.DrawText(text)
+					draw.DrawText(text, self.SelectorWeaponName.REGULAR, x + aSquareW / 2, y + inaSquareH / 2 - th / 2, active, TEXT_ALIGN_CENTER)
 
 					y = y + ypadding + inaSquareH
 				end

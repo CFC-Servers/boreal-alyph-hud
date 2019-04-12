@@ -64,6 +64,12 @@ BOREAL_ALYPH_HUD.SelectorSmallNumbers = BOREAL_ALYPH_HUD:CreateScalableFont('Sel
 	weight = 500
 })
 
+BOREAL_ALYPH_HUD.SelectorWeaponName = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorWeaponName', {
+	font = 'Alte DIN 1451 Mittelschrift',
+	size = 14,
+	weight = 500
+})
+
 BOREAL_ALYPH_HUD.SelectorNames = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorNames', {
 	font = 'Alte DIN 1451 Mittelschrift',
 	size = 18,
