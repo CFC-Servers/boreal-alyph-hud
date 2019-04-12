@@ -89,18 +89,21 @@ end
 
 function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	surface.SetFont(self.AmmoCounterReady.REGULAR)
-	local totalWidth
+	local totalWidth = 0
 	local barWidth = ScreenSize(self.BAR_AMMO_WIDTH)
 	local clip1, ammo1 = self:GetDisplayClip1(), self:GetDisplayAmmo1()
-	local w1, h1 = surface.GetTextSize(clip1)
 	local w2, h2 = 0, 0
-	totalWidth = w1
 
 	if self:ShouldDisplayAmmoStored() then
 		surface.SetFont(self.AmmoCounterStored.REGULAR)
 		w2, h2 = surface.GetTextSize('/' .. ammo1)
 		totalWidth = totalWidth + w2
+	elseif not self:ShouldDisplayAmmoReady() then
+		clip1 = ammo1
 	end
+
+	local w1, h1 = surface.GetTextSize(clip1)
+	totalWidth = totalWidth + w1
 
 	barWidth = barWidth:max(totalWidth)
 
