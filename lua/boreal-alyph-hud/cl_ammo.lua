@@ -27,10 +27,14 @@ local POS_AMMO = BOREAL_ALYPH_HUD:DefineStaticPosition('ammo', 0.96, 0.87)
 function BOREAL_ALYPH_HUD:PaintAmmo()
 	local x, y = POS_AMMO()
 
-	if not self:ShouldDisplayAmmo() then return end
-
 	if not self:ShouldDisplaySecondaryAmmo() then
+		if not self:ShouldDisplayAmmo() then return end
 		self:DrawPrimaryAmmo(x, y)
+		return
+	end
+
+	if not self:ShouldDisplayAmmo() then
+		self:DrawSecondaryAmmo(x, y)
 		return
 	end
 
@@ -45,7 +49,7 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 	local barWidth = ScreenSize(40) -- Althrough there is no bar in gmod, we still use this for padding
 	-- scratch that, we got clip
 
-	if not self:ShouldDisplaySecondaryAmmoReady() and self:ShouldDisplayAmmoStored2() then
+	if not self:ShouldDisplayAmmoReady2() and self:ShouldDisplayAmmoStored2() then
 		local w1, h1 = surface.GetTextSize(ammo2)
 		local totalWidth = w1
 
