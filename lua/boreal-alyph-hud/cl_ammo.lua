@@ -88,7 +88,6 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 end
 
 function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
-	surface.SetFont(self.AmmoCounterReady.REGULAR)
 	local totalWidth = 0
 	local barWidth = ScreenSize(self.BAR_AMMO_WIDTH)
 	local clip1, ammo1 = self:GetDisplayClip1(), self:GetDisplayAmmo1()
@@ -102,6 +101,7 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 		clip1 = ammo1
 	end
 
+	surface.SetFont(self.AmmoCounterReady.REGULAR)
 	local w1, h1 = surface.GetTextSize(clip1)
 	totalWidth = totalWidth + w1
 
