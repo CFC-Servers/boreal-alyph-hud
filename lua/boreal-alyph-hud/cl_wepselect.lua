@@ -72,7 +72,7 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 	local inactive = self.SelectorColorInactive:ModifyAlpha((self.SelectorColorInactive.a / 255) * alpha)
 
 	if #self.WeaponListInSlot > 10 then
-		scrollEnd = math.min(#self.WeaponListInSlot, math.max(weaponPoint + 5, 11))
+		scrollEnd = math.min(#self.WeaponListInSlot, math.max(self:GetActiveWeaponPos() + 5, 11))
 		scrollStart = math.max(1, scrollEnd - 10)
 	end
 
