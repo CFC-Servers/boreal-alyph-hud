@@ -25,7 +25,7 @@ local draw = draw
 local TEXT_ALIGN_CENTER = TEXT_ALIGN_CENTER
 
 BOREAL_ALYPH_HUD.SelectorColorActive = Color(255, 176, 0, 160)
-BOREAL_ALYPH_HUD.SelectorColorInactive = Color(255, 176, 0, 160) * 160
+BOREAL_ALYPH_HUD.SelectorColorInactive = Color(255, 176, 0, 40) * 160
 
 BOREAL_ALYPH_HUD:InitializeWeaponSelector(true)
 
@@ -37,6 +37,8 @@ BOREAL_ALYPH_HUD.SELECTOR_SQUARE_INACTIVE_H = 30
 
 BOREAL_ALYPH_HUD.SELECTOR_SQUARE_ACTIVE_W = 120
 BOREAL_ALYPH_HUD.SELECTOR_SQUARE_ACTIVE_H = 70
+BOREAL_ALYPH_HUD.SELECTOR_DENY_FADEOUT = 0
+BOREAL_ALYPH_HUD.SELECTOR_DENY_FADEOUTS = 0
 
 local POS_SELECTOR = BOREAL_ALYPH_HUD:DefineStaticPosition('wepselect', 0.5, 0.06)
 
@@ -46,8 +48,13 @@ local function getPrintName(self)
 	return phrase ~= class and phrase or self:GetPrintName()
 end
 
+function BOREAL_ALYPH_HUD:CallWeaponSelectorDeny()
+	self.SELECTOR_DENY_FADEOUTS = RealTimeL()
+	self.SELECTOR_DENY_FADEOUT = RealTimeL() + 1.2
+end
+
 function BOREAL_ALYPH_HUD:DrawWeaponSelector()
-	if not self:ShouldDrawWeaponSelection() then return end
+	if not self:ShouldDrawWeaponSelection() and self.SELECTOR_DENY_FADEOUT < RealTimeL() then return end
 
 	local deny = #self.WeaponListInSlot == 0
 
@@ -56,13 +63,13 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 	local padding = ScreenSize(self.SELECTOR_SQUARE_SPACE)
 	local inpadding = ScreenSize(self.SELECTOR_SQUARE_PADDING)
 	local ypadding = ScreenSize(self.SELECTOR_SQUARE_SPACE_H)
-	local alpha = self:GetSelectorAlpha()
+	local alpha = self:GetSelectorAlpha():max(255 - RealTimeL():progression(self.SELECTOR_DENY_FADEOUTS, self.SELECTOR_DENY_FADEOUT) * 255)
 	x = x - width / 2
 
 	local scrollStart, scrollEnd = 1, #self.WeaponListInSlot
 
 	local active = self.SelectorColorActive:ModifyAlpha(self.ENABLE_FX:GetBool() and alpha or (self.SelectorColorActive.a / 255) * alpha)
-	local inactive = self.SelectorColorInactive:ModifyAlpha(self.ENABLE_FX:GetBool() and alpha or (self.SelectorColorInactive.a / 255) * alpha)
+	local inactive = self.SelectorColorInactive:ModifyAlpha((self.SelectorColorInactive.a / 255) * alpha)
 
 	if #self.WeaponListInSlot > 10 then
 		scrollEnd = math.min(#self.WeaponListInSlot, math.max(weaponPoint + 5, 11))
@@ -113,8 +120,10 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 
 			x = x + ScreenSize(self.SELECTOR_SQUARE_ACTIVE_W) + padding
 		else
-			surface.SetDrawColor(inactive)
-			surface.DrawRect(x, y, inaSquareW, inaSquareH)
+			if #self:GetWeaponsInSlot(i) ~= 0 then
+				surface.SetDrawColor(inactive)
+				surface.DrawRect(x, y, inaSquareW, inaSquareH)
+			end
 
 			surface.SetFont(self.SelectorSmallNumbers.REGULAR)
 			surface.SetTextColor(active)
