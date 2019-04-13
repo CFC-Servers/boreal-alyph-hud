@@ -23,6 +23,29 @@ local surface = surface
 local ScreenSize = ScreenSize
 local render = render
 
+--[[
+	Achieved With
+   _____                       _
+  / ____|                     ( )
+ | |  __  __ _ _ __ _ __ _   _|/ ___
+ | | |_ |/ _` | '__| '__| | | | / __|
+ | |__| | (_| | |  | |  | |_| | \__ \
+  \_____|\__,_|_|  |_|   \__, | |___/
+ |  \/  |         | |     __/ |
+ | \  / | ___   __| |    |___/
+ | |\/| |/ _ \ / _` |
+ | |  | | (_) | (_| |
+ |_|  |_|\___/ \__,_|
+           _____ _____
+     /\   |  __ \_   _|
+    /  \  | |__) || |
+   / /\ \ |  ___/ | |
+  / ____ \| |    _| |_
+ /_/    \_\_|   |_____|
+
+almost died from aids while creating effects without shader access
+]]
+
 local HUDRT, ScanlinesRT, HUDRTMat, HUDRTMat1, HUDRTMat2, HUDRTMat3, ScanlinesRTMat
 local RTW, RTH
 
@@ -85,7 +108,7 @@ local function refreshRT()
 		['$additive'] = '0',
 	})
 
-	HUDRTMat3 = CreateMaterial('boreal-alyph-hud-hudrt' .. math.random(), 'UnlitGeneric', {
+	--[[HUDRTMat3 = CreateMaterial('boreal-alyph-hud-hudrt' .. math.random(), 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
 		['$translucent'] = '1',
 		['$halflambert'] = '1',
@@ -101,18 +124,18 @@ local function refreshRT()
 		['$color'] = '0 0 0',
 		['$alpha'] = '0.8',
 		['$additive'] = '0',
-	})
+	})]]
 
 	HUDRTMat:SetTexture('$basetexture', HUDRT)
 	HUDRTMat1:SetTexture('$basetexture', HUDRT)
 	HUDRTMat2:SetTexture('$basetexture', HUDRT)
-	HUDRTMat3:SetTexture('$basetexture', HUDRT)
-	HUDRTMat4:SetTexture('$basetexture', HUDRT)
+	--HUDRTMat3:SetTexture('$basetexture', HUDRT)
+	--HUDRTMat4:SetTexture('$basetexture', HUDRT)
 
 	HUDRTMat1:SetVector('$color', Color(255, 0, 0):ToVector())
 	HUDRTMat2:SetVector('$color', Color(0, 255, 0):ToVector())
-	HUDRTMat3:SetVector('$color', Color(0, 0, 255):ToVector())
-	HUDRTMat4:SetVector('$color', Color(0, 0, 0):ToVector())
+	--HUDRTMat3:SetVector('$color', Color(0, 0, 255):ToVector())
+	--HUDRTMat4:SetVector('$color', Color(0, 0, 0):ToVector())
 end
 
 timer.Simple(0, refreshRT)
@@ -151,14 +174,12 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	if not HUDRT then return end
 	if not self.ENABLE_FX:GetBool() then return end
 
-	--render.OverrideAlphaWriteEnable(false)
-
 	render.SetStencilCompareFunction(STENCIL_EQUAL)
 	render.SetStencilFailOperation(STENCIL_KEEP)
 
-	surface.SetDrawColor(0, 0, 0, 255)
+	surface.SetDrawColor(70, 70, 70, 170)
 
-	render.OverrideBlend(true, BLEND_SRC_ALPHA_SATURATE, BLEND_DST_COLOR, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+	render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
 
 	for i = 1, ScrH(), 2 do
 		surface.DrawLine(0, i, ScrW(), i)
@@ -169,6 +190,9 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	render.SetStencilEnable(false)
 
 	cam.End2D()
+
+	render.OverrideAlphaWriteEnable(false)
+	render.OverrideColorWriteEnable(false)
 
 	surface.DisableClipping(false)
 	render.PopRenderTarget()
@@ -183,6 +207,7 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	surface.SetMaterial(HUDRTMat1)
 	surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
 
+	HUDRTMat:SetFloat('$alpha', 0.7)
 	surface.SetMaterial(HUDRTMat)
 	surface.DrawTexturedRect(0, 0, RTW, RTH)
 

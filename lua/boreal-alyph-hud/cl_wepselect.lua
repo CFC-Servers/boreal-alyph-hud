@@ -61,8 +61,8 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 
 	local scrollStart, scrollEnd = 1, #self.WeaponListInSlot
 
-	local active = self.SelectorColorActive:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or (self.SelectorColorActive.a / 255) * alpha)
-	local inactive = self.SelectorColorInactive:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or (self.SelectorColorInactive.a / 255) * alpha)
+	local active = self.SelectorColorActive:ModifyAlpha(self.ENABLE_FX:GetBool() and alpha or (self.SelectorColorActive.a / 255) * alpha)
+	local inactive = self.SelectorColorInactive:ModifyAlpha(self.ENABLE_FX:GetBool() and alpha or (self.SelectorColorInactive.a / 255) * alpha)
 
 	if #self.WeaponListInSlot > 10 then
 		scrollEnd = math.min(#self.WeaponListInSlot, math.max(weaponPoint + 5, 11))
