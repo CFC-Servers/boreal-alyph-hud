@@ -33,7 +33,7 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	local def = Matrix()
 	def:Translate(Vector(POS_HEALTH()))
 
-	if self.ENABLE_FX:GetBool() then
+	if self.ENABLE_FX:GetBool() and self.ENABLE_FX_DISTORT:GetBool() then
 		--def:Scale(Vector(1.2, 1))
 		def:Rotate(Angle(0, -3))
 		def:SetField(1, 2, -0.1)

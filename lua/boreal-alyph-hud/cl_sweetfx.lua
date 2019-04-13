@@ -50,7 +50,10 @@ almost died from aids while creating effects without shader access
 local HUDRT, HUDRTComposite, ScanlinesRT, HUDRTMat, HUDRTMat1, HUDRTMat2, HUDRTMat3, ScanlinesRTMat, HUDRTCompositeMat
 local RTW, RTH
 
-BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD SweetFX (Abberation, Distortion, Scanlines)')
+BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD ~~SweetFX~~ FX')
+BOREAL_ALYPH_HUD.ENABLE_FX_SCANLINES = BOREAL_ALYPH_HUD:CreateConVar('fx_scanlines', '1', 'Enable scanlines')
+BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation', '1', 'Enable abberation')
+BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT = BOREAL_ALYPH_HUD:CreateConVar('fx_distort', '1', 'Enable distort')
 
 local function refreshRT()
 	--[[if IsValid(BOREAL_ALYPH_HUD_MODEL) then
@@ -195,17 +198,19 @@ function BOREAL_ALYPH_HUD:PreDrawFX(pushMatrix)
 		surface.DisableClipping(true)
 	end
 
-	render.SetStencilEnable(true)
-	render.ClearStencil()
+	if self.ENABLE_FX_SCANLINES:GetBool() then
+		render.SetStencilEnable(true)
+		render.ClearStencil()
 
-	render.SetStencilCompareFunction(STENCIL_ALWAYS)
-	render.SetStencilPassOperation(STENCIL_REPLACE)
-	render.SetStencilFailOperation(STENCIL_REPLACE)
-	render.SetStencilZFailOperation(STENCIL_KEEP)
+		render.SetStencilCompareFunction(STENCIL_ALWAYS)
+		render.SetStencilPassOperation(STENCIL_REPLACE)
+		render.SetStencilFailOperation(STENCIL_REPLACE)
+		render.SetStencilZFailOperation(STENCIL_KEEP)
 
-	render.SetStencilWriteMask(255)
-	render.SetStencilTestMask(255)
-	render.SetStencilReferenceValue(1)
+		render.SetStencilWriteMask(255)
+		render.SetStencilTestMask(255)
+		render.SetStencilReferenceValue(1)
+	end
 end
 
 function BOREAL_ALYPH_HUD:PostDrawFX2()
@@ -213,11 +218,13 @@ function BOREAL_ALYPH_HUD:PostDrawFX2()
 
 	surface.SetDrawColor(255, 255, 255)
 
-	surface.SetMaterial(HUDRTMat2)
-	surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
+	if self.ENABLE_FX_ABBERATION:GetBool() then
+		surface.SetMaterial(HUDRTMat2)
+		surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
 
-	surface.SetMaterial(HUDRTMat1)
-	surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
+		surface.SetMaterial(HUDRTMat1)
+		surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
+	end
 
 	--HUDRTMat:SetFloat('$alpha', 1)
 	HUDRTMat:SetFloat('$alpha', 0.7)
@@ -238,32 +245,33 @@ function BOREAL_ALYPH_HUD:PostDrawFX(matrixPushed)
 		return
 	end
 
-	render.SetStencilCompareFunction(STENCIL_EQUAL)
-	render.SetStencilFailOperation(STENCIL_KEEP)
+	if self.ENABLE_FX_SCANLINES:GetBool() then
+		render.SetStencilCompareFunction(STENCIL_EQUAL)
+		render.SetStencilFailOperation(STENCIL_KEEP)
 
-	render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+		render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
 
-	if matrixPushed then
-		surface.SetDrawColor(70, 70, 70, 70)
+		if matrixPushed then
+			surface.SetDrawColor(70, 70, 70, 70)
 
-		local x1 = -ScrW() / 2
+			local x1 = -ScrW() / 2
 
-		for i = 1, ScrH(), 2 do
-			surface.DrawLine(x1, i, -x1, i)
+			for i = 1, ScrH(), 2 do
+				surface.DrawLine(x1, i, -x1, i)
+			end
+		else
+			surface.SetDrawColor(70, 70, 70, 140)
+
+			local x1 = ScrW()
+
+			for i = 1, ScrH(), 2 do
+				surface.DrawLine(0, i, x1, i)
+			end
 		end
-	else
-		surface.SetDrawColor(70, 70, 70, 140)
 
-		local x1 = ScrW()
-
-		for i = 1, ScrH(), 2 do
-			surface.DrawLine(0, i, x1, i)
-		end
+		render.OverrideBlend(false)
+		render.SetStencilEnable(false)
 	end
-
-	render.OverrideBlend(false)
-
-	render.SetStencilEnable(false)
 
 	if matrixPushed then
 		render.PopFilterMag()
