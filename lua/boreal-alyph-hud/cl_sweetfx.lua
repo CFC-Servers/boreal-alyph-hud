@@ -161,6 +161,7 @@ local function refreshRT()
 end
 
 timer.Simple(0, refreshRT)
+hook.Add('ScreenResolutionChanged', 'BAHUD.RefreshRT', refreshRT)
 
 local scanlines = Material('sprops/trans/misc/tracks_wood')
 
