@@ -98,7 +98,7 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 					local text = getPrintName(weapon)
 					local tw, th = surface.GetTextSize(text)
 
-					draw.DrawText(text, self.SelectorSmallNumbers.REGULAR, x + inpadding, y + aSquareH - th - inpadding, inactive:ModifyAlpha(255), TEXT_ALIGN_LEFT)
+					draw.DrawText(text, self.SelectorSmallNumbers.REGULAR, x + inpadding, y + aSquareH - th - inpadding, inactive:ModifyAlpha(alpha), TEXT_ALIGN_LEFT)
 
 					y = y + ypadding + aSquareH
 				else
