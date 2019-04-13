@@ -36,6 +36,8 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	local w, h = surface.GetTextSize('+')
 
 	local col = self:GetHealthFillage() > 0.3 and self.HealthColor or self.CriticalHealthColor
+	local acol = col
+	col = col:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or col.a)
 	surface.SetTextColor(col)
 
 	surface.SetTextPos(x, y)
@@ -46,7 +48,7 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	surface.SetTextPos(x + padding + w, y + ScreenSize(2))
 	surface.DrawText(self:GetVarHealth())
 
-	surface.SetDrawColor(col * 50)
+	surface.SetDrawColor((col * 50):SetAlpha(acol.a))
 	surface.DrawRect(x, y + h + padding, barWidth, barHeight)
 
 	surface.SetDrawColor(col)
@@ -70,7 +72,9 @@ function BOREAL_ALYPH_HUD:PaintArmor(x, y)
 
 	local w, h = surface.GetTextSize('*')
 
-	surface.SetTextColor(self.ArmorColor)
+	local col = self.ArmorColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.ArmorColor.a)
+
+	surface.SetTextColor(col)
 
 	surface.SetTextPos(x, y)
 	surface.DrawText('*')
@@ -80,10 +84,10 @@ function BOREAL_ALYPH_HUD:PaintArmor(x, y)
 	surface.SetTextPos(x + padding + w, y + ScreenSize(2))
 	surface.DrawText(self:GetVarArmor())
 
-	surface.SetDrawColor(self.ArmorColor * 50)
+	surface.SetDrawColor((col * 50):SetAlpha(self.ArmorColor.a))
 	surface.DrawRect(x, y + h + padding, barWidth, barHeight)
 
-	surface.SetDrawColor(self.ArmorColor)
+	surface.SetDrawColor(col)
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetArmorFillage(), barHeight)
 end
 

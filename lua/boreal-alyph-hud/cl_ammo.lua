@@ -45,7 +45,9 @@ end
 function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 	surface.SetFont(self.AmmoCounterReady.REGULAR)
 	local clip2, ammo2 = self:GetDisplayClip2(), self:GetDisplayAmmo2()
-	surface.SetTextColor(self.AmmoColor)
+	local col = self.AmmoColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.AmmoColor.a)
+
+	surface.SetTextColor(col)
 	local barWidth = ScreenSize(40) -- Althrough there is no bar in gmod, we still use this for padding
 	-- scratch that, we got clip
 
@@ -58,7 +60,7 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 
 		barWidth = barWidth:max(totalWidth)
 
-		surface.SetDrawColor(ammo2 > 0 and self.AmmoColor or self.AmmoColor * 50)
+		surface.SetDrawColor(ammo2 > 0 and col or (col * 50):SetAlpha(self.AmmoColor.a))
 		surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
 
 		return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
@@ -83,9 +85,9 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 
 	barWidth = barWidth:max(totalWidth)
 
-	surface.SetDrawColor(self.AmmoColor * 50)
+	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
 	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
-	surface.SetDrawColor(self.AmmoColor)
+	surface.SetDrawColor(col)
 	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth * self:GetAmmoFillage2(), ScreenSize(self.BAR_DEF_HEIGHT))
 
 	return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
@@ -96,6 +98,8 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	local barWidth = ScreenSize(self.BAR_AMMO_WIDTH)
 	local clip1, ammo1 = self:GetDisplayClip1(), self:GetDisplayAmmo1()
 	local w2, h2 = 0, 0
+
+	local col = self.AmmoColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.AmmoColor.a)
 
 	if self:ShouldDisplayAmmoStored() then
 		surface.SetFont(self.AmmoCounterStored.REGULAR)
@@ -112,7 +116,7 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	barWidth = barWidth:max(totalWidth)
 
 	surface.SetFont(self.AmmoCounterReady.REGULAR)
-	surface.SetTextColor(self.AmmoColor)
+	surface.SetTextColor(col)
 	surface.SetTextPos(x - totalWidth, y)
 	surface.DrawText(clip1)
 
@@ -122,9 +126,9 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 		surface.DrawText('/' .. ammo1)
 	end
 
-	surface.SetDrawColor(self.AmmoColor * 50)
+	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
 	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
-	surface.SetDrawColor(self.AmmoColor)
+	surface.SetDrawColor(col)
 	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth * self:GetAmmoFillage1(), ScreenSize(self.BAR_DEF_HEIGHT))
 end
 
