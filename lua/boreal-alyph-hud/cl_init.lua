@@ -76,10 +76,10 @@ BOREAL_ALYPH_HUD.SelectorNames = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorNa
 	weight = 500
 })
 
-BOREAL_ALYPH_HUD.HealthColor = Color(255, 176, 0, 160)
+BOREAL_ALYPH_HUD.HealthColor = Color(255, 176, 0)
 BOREAL_ALYPH_HUD.CriticalHealthColor = Color(135, 25, 25)
-BOREAL_ALYPH_HUD.ArmorColor = Color(255, 176, 0, 160)
-BOREAL_ALYPH_HUD.AmmoColor = Color(255, 176, 0, 160)
+BOREAL_ALYPH_HUD.ArmorColor = Color(255, 176, 0)
+BOREAL_ALYPH_HUD.AmmoColor = Color(255, 176, 0)
 
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = 65
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = 90

@@ -26,6 +26,8 @@ local render = render
 local HUDRT, ScanlinesRT, HUDRTMat, HUDRTMat1, HUDRTMat2, HUDRTMat3, ScanlinesRTMat
 local RTW, RTH
 
+BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD FX')
+
 local function refreshRT()
 	local w, h = ScrW(), ScrH()
 	RTW, RTH = 0, 0
@@ -52,39 +54,6 @@ local function refreshRT()
 	-- textureFlags = textureFlags + 67108864 -- Usable as a vertex texture
 
 	HUDRT = GetRenderTargetEx('boreal-alyph-hud-hudrt1111', RTW, RTH, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_ONLY, textureFlags, CREATERENDERTARGETFLAGS_UNFILTERABLE_OK, IMAGE_FORMAT_RGBA8888)
-	ScanlinesRT = GetRenderTargetEx('boreal-alyph-hud-scanlines', RTW, RTH, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_ONLY, textureFlags, CREATERENDERTARGETFLAGS_UNFILTERABLE_OK, IMAGE_FORMAT_RGBA8888)
-
-	render.PushRenderTarget(ScanlinesRT)
-
-	render.OverrideColorWriteEnable(true, true)
-	render.OverrideAlphaWriteEnable(true, true)
-
-	render.Clear(0, 0, 0, 255, true, true)
-
-	cam.Start2D()
-
-	surface.SetDrawColor(255, 255, 255)
-
-	for i = 1, ScrH(), 2 do
-		surface.DrawLine(0, i, ScrW(), i)
-	end
-
-	cam.End2D()
-
-	render.OverrideColorWriteEnable(false)
-	render.OverrideAlphaWriteEnable(false)
-
-	render.PopRenderTarget()
-
-	ScanlinesRTMat = CreateMaterial('boreal-alyph-hud-scanlines', 'UnlitGeneric', {
-		['$basetexture'] = 'models/debug/debugwhite',
-		['$translucent'] = '1',
-		['$halflambert'] = '1',
-		['$color'] = '1 1 1',
-		['$color2'] = '1 1 1',
-		['$alpha'] = '1',
-		['$additive'] = '0',
-	})
 
 	HUDRTMat = CreateMaterial('boreal-alyph-hud-hudrt', 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
@@ -95,6 +64,8 @@ local function refreshRT()
 		['$alpha'] = '1',
 		['$additive'] = '0',
 	})
+
+	HUDRTMat:SetFloat('$alpha', '1')
 
 	HUDRTMat1 = CreateMaterial('boreal-alyph-hud-hudrt' .. math.random(), 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
@@ -111,7 +82,7 @@ local function refreshRT()
 		['$halflambert'] = '1',
 		['$color'] = '0 1 0',
 		['$alpha'] = '0.75',
-		['$additive'] = '1',
+		['$additive'] = '0',
 	})
 
 	HUDRTMat3 = CreateMaterial('boreal-alyph-hud-hudrt' .. math.random(), 'UnlitGeneric', {
@@ -128,7 +99,7 @@ local function refreshRT()
 		['$translucent'] = '1',
 		['$halflambert'] = '1',
 		['$color'] = '0 0 0',
-		['$alpha'] = '0.6',
+		['$alpha'] = '0.8',
 		['$additive'] = '0',
 	})
 
@@ -137,7 +108,6 @@ local function refreshRT()
 	HUDRTMat2:SetTexture('$basetexture', HUDRT)
 	HUDRTMat3:SetTexture('$basetexture', HUDRT)
 	HUDRTMat4:SetTexture('$basetexture', HUDRT)
-	ScanlinesRTMat:SetTexture('$basetexture', ScanlinesRT)
 
 	HUDRTMat1:SetVector('$color', Color(255, 0, 0):ToVector())
 	HUDRTMat2:SetVector('$color', Color(0, 255, 0):ToVector())
@@ -151,28 +121,82 @@ local scanlines = Material('sprops/trans/misc/tracks_wood')
 
 function BOREAL_ALYPH_HUD:PreHUDPaint()
 	if not HUDRT then return end
+	if not self.ENABLE_FX:GetBool() then return end
 
 	render.PushRenderTarget(HUDRT)
 	render.OverrideColorWriteEnable(true, true)
 	render.OverrideAlphaWriteEnable(true, true)
 
-	render.Clear(75, 75, 75, 0, true, true)
+	render.Clear(0, 0, 0, 0, true, true)
 
 	surface.DisableClipping(true)
 	cam.Start2D()
+
+	--render.OverrideAlphaWriteEnable(true, false)
+
+	render.SetStencilEnable(true)
+	render.ClearStencil()
+
+	render.SetStencilCompareFunction(STENCIL_ALWAYS)
+	render.SetStencilPassOperation(STENCIL_REPLACE)
+	render.SetStencilFailOperation(STENCIL_REPLACE)
+	render.SetStencilZFailOperation(STENCIL_KEEP)
+
+	render.SetStencilWriteMask(255)
+	render.SetStencilTestMask(255)
+	render.SetStencilReferenceValue(1)
 end
 
 function BOREAL_ALYPH_HUD:PostHUDPaint()
 	if not HUDRT then return end
+	if not self.ENABLE_FX:GetBool() then return end
+
+	--render.OverrideAlphaWriteEnable(false)
+
+	render.SetStencilCompareFunction(STENCIL_EQUAL)
+	render.SetStencilFailOperation(STENCIL_KEEP)
+
+	surface.SetDrawColor(0, 0, 0, 255)
+
+	render.OverrideBlend(true, BLEND_SRC_ALPHA_SATURATE, BLEND_DST_COLOR, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+
+	for i = 1, ScrH(), 2 do
+		surface.DrawLine(0, i, ScrW(), i)
+	end
+
+	render.OverrideBlend(false)
+
+	render.SetStencilEnable(false)
 
 	cam.End2D()
+
 	surface.DisableClipping(false)
 	render.PopRenderTarget()
 
-	render.OverrideColorWriteEnable(false)
-	render.OverrideAlphaWriteEnable(false)
+	--render.OverrideBlend(true, BLEND_ONE, BLEND_ONE_MINUS_SRC_COLOR, BLENDFUNC_ADD, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD)
 
-	render.SetStencilEnable(true)
+	surface.SetDrawColor(255, 255, 255)
+
+	surface.SetMaterial(HUDRTMat2)
+	surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
+
+	surface.SetMaterial(HUDRTMat1)
+	surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
+
+	surface.SetMaterial(HUDRTMat)
+	surface.DrawTexturedRect(0, 0, RTW, RTH)
+
+	--render.OverrideBlend(false)
+
+	--surface.SetDrawColor(255, 255, 255)
+	--surface.SetMaterial(HUDRTMat4)
+	--surface.DrawTexturedRect(0, 0, RTW, RTH)
+
+	--[[render.OverrideColorWriteEnable(false)
+	render.OverrideAlphaWriteEnable(false)
+	render.OverrideBlend(false)]]
+
+	--[[render.SetStencilEnable(true)
 	render.SetStencilWriteMask(255)
 	render.SetStencilTestMask(255)
 	render.SetStencilReferenceValue(1)
@@ -182,9 +206,7 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	render.SetStencilFailOperation(STENCIL_REPLACE)
 	render.SetStencilZFailOperation(STENCIL_KEEP)
 
-	surface.SetMaterial(ScanlinesRTMat)
 	surface.SetDrawColor(255, 255, 255)
-	--surface.DrawTexturedRect(0, 0, ScrW() - 400, ScrH())
 
 	for i = 1, ScrH(), 2 do
 		surface.DrawLine(0, i, ScrW(), i)
@@ -195,7 +217,7 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	render.SetStencilFailOperation(STENCIL_KEEP)
 
 	surface.SetDrawColor(255, 255, 255)
-	HUDRTMat:SetFloat('$alpha', 1)
+	HUDRTMat:SetVector('$color', Vector(1, 1, 1))
 	surface.SetMaterial(HUDRTMat)
 	surface.DrawTexturedRect(0, 0, RTW, RTH)
 
@@ -213,10 +235,10 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	render.SetStencilFailOperation(STENCIL_KEEP)
 
 	surface.SetMaterial(HUDRTMat)
-	HUDRTMat:SetFloat('$alpha', 0.3)
+	HUDRTMat:SetVector('$color', Vector(0.85, 0.85, 0.85))
 	surface.DrawTexturedRect(0, 0, RTW, RTH)
 
-	render.SetStencilEnable(false)
+	render.SetStencilEnable(false)]]
 
 	--[[
 	render.SetMaterial(HUDRTMat3)
@@ -233,9 +255,8 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 
 	--surface.SetMaterial(HUDRTMat)
 	--surface.DrawTexturedRect(0, 0, RTW, RTH)
-	--[[surface.SetMaterial(HUDRTMat4)
-	surface.DrawTexturedRect(0, 0, RTW, RTH)
 
+	--[[
 	for i = 1, 2 do
 		surface.SetMaterial(HUDRTMat1)
 		surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
