@@ -34,7 +34,7 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 	def:Translate(Vector(x, y))
 
 	if self.ENABLE_FX:GetBool() then
-		def:Scale(Vector(1.1, 1))
+		--def:Scale(Vector(1.1, 1))
 		def:Rotate(Angle(0, 3))
 		def:SetField(1, 2, 0.1)
 	end
