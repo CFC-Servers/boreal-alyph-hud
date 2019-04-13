@@ -21,25 +21,51 @@
 local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
 local surface = surface
 local ScreenSize = ScreenSize
+local Matrix = Matrix
+local Vector = Vector
+local Angle = Angle
 
 local POS_AMMO = BOREAL_ALYPH_HUD:DefineStaticPosition('ammo', 0.96, 0.87)
 
 function BOREAL_ALYPH_HUD:PaintAmmo()
 	local x, y = POS_AMMO()
 
+	local def = Matrix()
+	def:Translate(Vector(x, y))
+
+	if self.ENABLE_FX:GetBool() then
+		def:Scale(Vector(1.1, 1))
+		def:Rotate(Angle(0, 6))
+		def:SetField(1, 2, 0.1)
+	end
+
+	surface.DisableClipping(true)
+
 	if not self:ShouldDisplaySecondaryAmmo() then
-		if not self:ShouldDisplayAmmo() then return end
-		self:DrawPrimaryAmmo(x, y)
+		if not self:ShouldDisplayAmmo() then
+			surface.DisableClipping(false)
+			return
+		end
+
+		self:PreDrawFX(def)
+		self:DrawPrimaryAmmo(0, 0)
+		self:PostDrawFX(true)
+
 		return
 	end
 
 	if not self:ShouldDisplayAmmo() then
-		self:DrawSecondaryAmmo(x, y)
+		self:PreDrawFX(def)
+		self:DrawSecondaryAmmo(0, 0)
+		self:PostDrawFX(true)
+
 		return
 	end
 
-	x, y = self:DrawSecondaryAmmo(x, y)
-	self:DrawPrimaryAmmo(x, y)
+	self:PreDrawFX(def)
+	local x2, y2 = self:DrawSecondaryAmmo(0, 0)
+	self:DrawPrimaryAmmo(x2, y2 + ScreenSize(3))
+	self:PostDrawFX(true)
 end
 
 function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)

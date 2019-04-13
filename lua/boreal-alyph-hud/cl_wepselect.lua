@@ -56,6 +56,8 @@ end
 function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 	if not self:ShouldDrawWeaponSelection() and self.SELECTOR_DENY_FADEOUT < RealTimeL() then return end
 
+	self:PreDrawFX()
+
 	local deny = #self.WeaponListInSlot == 0
 
 	local width = ScreenSize(self.SELECTOR_SQUARE_INACTIVE_W) * (not deny and 5 or 6) + ScreenSize(self.SELECTOR_SQUARE_ACTIVE_W) * (not deny and 1 or 0)
@@ -140,6 +142,9 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 			x = x + ScreenSize(self.SELECTOR_SQUARE_INACTIVE_W) + padding
 		end
 	end
+
+	self:PostDrawFX()
+	self:PostDrawFX2()
 end
 
 BOREAL_ALYPH_HUD:AddPaintHook('DrawWeaponSelector')

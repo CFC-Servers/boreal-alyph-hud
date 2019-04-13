@@ -22,6 +22,7 @@ local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
 local surface = surface
 local ScreenSize = ScreenSize
 local render = render
+local Matrix = Matrix
 
 --[[
 	Achieved With
@@ -46,12 +47,19 @@ local render = render
 almost died from aids while creating effects without shader access
 ]]
 
-local HUDRT, ScanlinesRT, HUDRTMat, HUDRTMat1, HUDRTMat2, HUDRTMat3, ScanlinesRTMat
+local HUDRT, HUDRTComposite, ScanlinesRT, HUDRTMat, HUDRTMat1, HUDRTMat2, HUDRTMat3, ScanlinesRTMat, HUDRTCompositeMat
 local RTW, RTH
 
-BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD FX')
+BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD SweetFX (Abberation, Distortion, Scanlines)')
 
 local function refreshRT()
+	--[[if IsValid(BOREAL_ALYPH_HUD_MODEL) then
+		BOREAL_ALYPH_HUD_MODEL:Remove()
+	end
+
+	BOREAL_ALYPH_HUD_MODEL = ClientsideModel('models/pac/default.mdl', RENDERGROUP_TRANSLUCENT)
+	BOREAL_ALYPH_HUD_MODEL:SetNoDraw(true)]]
+
 	local w, h = ScrW(), ScrH()
 	RTW, RTH = 0, 0
 
@@ -77,6 +85,7 @@ local function refreshRT()
 	-- textureFlags = textureFlags + 67108864 -- Usable as a vertex texture
 
 	HUDRT = GetRenderTargetEx('boreal-alyph-hud-hudrt1111', RTW, RTH, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_ONLY, textureFlags, CREATERENDERTARGETFLAGS_UNFILTERABLE_OK, IMAGE_FORMAT_RGBA8888)
+	--HUDRTComposite = GetRenderTargetEx('boreal-alyph-hud-composite', RTW, RTH, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_ONLY, textureFlags, CREATERENDERTARGETFLAGS_UNFILTERABLE_OK, IMAGE_FORMAT_RGBA8888)
 
 	HUDRTMat = CreateMaterial('boreal-alyph-hud-hudrt', 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
@@ -90,7 +99,7 @@ local function refreshRT()
 
 	HUDRTMat:SetFloat('$alpha', '1')
 
-	HUDRTMat1 = CreateMaterial('boreal-alyph-hud-hudrt' .. math.random(), 'UnlitGeneric', {
+	HUDRTMat1 = CreateMaterial('boreal-alyph-hud-hudrt1', 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
 		['$translucent'] = '1',
 		['$halflambert'] = '1',
@@ -99,7 +108,17 @@ local function refreshRT()
 		['$additive'] = '1',
 	})
 
-	HUDRTMat2 = CreateMaterial('boreal-alyph-hud-hudrt' .. math.random(), 'UnlitGeneric', {
+	--[[HUDRTCompositeMat = CreateMaterial('boreal-alyph-hud-composite', 'UnlitGeneric', {
+		['$basetexture'] = 'models/debug/debugwhite',
+		['$translucent'] = '1',
+		['$halflambert'] = '1',
+		['$color'] = '1 0 1',
+		['$alpha'] = '1',
+		['$model'] = '1',
+		['$additive'] = '1',
+	})]]
+
+	HUDRTMat2 = CreateMaterial('boreal-alyph-hud-hudrt2', 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
 		['$translucent'] = '1',
 		['$halflambert'] = '1',
@@ -129,8 +148,11 @@ local function refreshRT()
 	HUDRTMat:SetTexture('$basetexture', HUDRT)
 	HUDRTMat1:SetTexture('$basetexture', HUDRT)
 	HUDRTMat2:SetTexture('$basetexture', HUDRT)
+	--HUDRTCompositeMat:SetTexture('$basetexture', HUDRTComposite)
 	--HUDRTMat3:SetTexture('$basetexture', HUDRT)
 	--HUDRTMat4:SetTexture('$basetexture', HUDRT)
+
+	--BOREAL_ALYPH_HUD_MODEL:SetMaterial(HUDRTMat)
 
 	HUDRTMat1:SetVector('$color', Color(255, 0, 0):ToVector())
 	HUDRTMat2:SetVector('$color', Color(0, 255, 0):ToVector())
@@ -142,6 +164,140 @@ timer.Simple(0, refreshRT)
 
 local scanlines = Material('sprops/trans/misc/tracks_wood')
 
+function BOREAL_ALYPH_HUD:PreDrawFX(pushMatrix)
+	if not HUDRT or not self.ENABLE_FX:GetBool() then
+		if pushMatrix then
+			cam.PushModelMatrix(pushMatrix)
+
+			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+
+			surface.DisableClipping(true)
+		end
+
+		return
+	end
+
+	render.PushRenderTarget(HUDRT)
+	render.OverrideColorWriteEnable(true, true)
+	render.OverrideAlphaWriteEnable(true, true)
+
+	render.Clear(0, 0, 0, 0, true, true)
+	cam.Start2D()
+
+	if pushMatrix then
+		cam.PushModelMatrix(pushMatrix)
+
+		render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+		render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+
+		surface.DisableClipping(true)
+	end
+
+	render.SetStencilEnable(true)
+	render.ClearStencil()
+
+	render.SetStencilCompareFunction(STENCIL_ALWAYS)
+	render.SetStencilPassOperation(STENCIL_REPLACE)
+	render.SetStencilFailOperation(STENCIL_REPLACE)
+	render.SetStencilZFailOperation(STENCIL_KEEP)
+
+	render.SetStencilWriteMask(255)
+	render.SetStencilTestMask(255)
+	render.SetStencilReferenceValue(1)
+end
+
+function BOREAL_ALYPH_HUD:PostDrawFX2()
+	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
+
+	surface.SetDrawColor(255, 255, 255)
+
+	surface.SetMaterial(HUDRTMat2)
+	surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
+
+	surface.SetMaterial(HUDRTMat1)
+	surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
+
+	--HUDRTMat:SetFloat('$alpha', 1)
+	HUDRTMat:SetFloat('$alpha', 0.7)
+	surface.SetMaterial(HUDRTMat)
+	surface.DrawTexturedRect(0, 0, RTW, RTH)
+end
+
+function BOREAL_ALYPH_HUD:PostDrawFX(matrixPushed)
+	if not HUDRT or not self.ENABLE_FX:GetBool() then
+		if matrixPushed then
+			render.PopFilterMag()
+			render.PopFilterMin()
+
+			cam.PopModelMatrix()
+			surface.DisableClipping(false)
+		end
+
+		return
+	end
+
+	render.SetStencilCompareFunction(STENCIL_EQUAL)
+	render.SetStencilFailOperation(STENCIL_KEEP)
+
+	render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
+
+	if matrixPushed then
+		surface.SetDrawColor(70, 70, 70, 70)
+
+		local x1 = -ScrW() / 2
+
+		for i = 1, ScrH(), 2 do
+			surface.DrawLine(x1, i, -x1, i)
+		end
+	else
+		surface.SetDrawColor(70, 70, 70, 140)
+
+		local x1 = ScrW()
+
+		for i = 1, ScrH(), 2 do
+			surface.DrawLine(0, i, x1, i)
+		end
+	end
+
+	render.OverrideBlend(false)
+
+	render.SetStencilEnable(false)
+
+	if matrixPushed then
+		render.PopFilterMag()
+		render.PopFilterMin()
+
+		cam.PopModelMatrix()
+		surface.DisableClipping(false)
+	end
+
+	cam.End2D()
+
+	render.OverrideAlphaWriteEnable(false)
+	render.OverrideColorWriteEnable(false)
+
+	render.PopRenderTarget()
+
+	if matrixPushed then
+		self:PostDrawFX2()
+	end
+
+	--render.OverrideBlend(true, BLEND_ONE, BLEND_ONE_MINUS_SRC_COLOR, BLENDFUNC_ADD, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD)
+
+	--[[local W, H = ScrWL(), ScrHL()
+
+	render.PushRenderTarget(HUDRTComposite)
+
+	render.Clear(0, 0, 0, 0, true, true)
+
+	cam.Start2D()
+
+	render.OverrideColorWriteEnable(true, true)
+	render.OverrideAlphaWriteEnable(true, true)]]
+end
+
+--[==[
 function BOREAL_ALYPH_HUD:PreHUDPaint()
 	if not HUDRT then return end
 	if not self.ENABLE_FX:GetBool() then return end
@@ -199,6 +355,17 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 
 	--render.OverrideBlend(true, BLEND_ONE, BLEND_ONE_MINUS_SRC_COLOR, BLENDFUNC_ADD, BLEND_ONE, BLEND_ONE, BLENDFUNC_ADD)
 
+	--[[local W, H = ScrWL(), ScrHL()
+
+	render.PushRenderTarget(HUDRTComposite)
+
+	render.Clear(0, 0, 0, 0, true, true)
+
+	cam.Start2D()
+
+	render.OverrideColorWriteEnable(true, true)
+	render.OverrideAlphaWriteEnable(true, true)]]
+
 	surface.SetDrawColor(255, 255, 255)
 
 	surface.SetMaterial(HUDRTMat2)
@@ -207,9 +374,40 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 	surface.SetMaterial(HUDRTMat1)
 	surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
 
+	--HUDRTMat:SetFloat('$alpha', 1)
 	HUDRTMat:SetFloat('$alpha', 0.7)
 	surface.SetMaterial(HUDRTMat)
 	surface.DrawTexturedRect(0, 0, RTW, RTH)
+
+	--[[render.OverrideAlphaWriteEnable(false)
+	render.OverrideColorWriteEnable(false)
+
+	cam.End2D()
+
+	render.PopRenderTarget()
+
+	--surface.SetMaterial(HUDRTCompositeMat)
+	--surface.DrawTexturedRect(0, 0, RTW, RTH)
+
+	cam.Start3D()
+
+	render.CullMode(MATERIAL_CULLMODE_CW)
+
+	--render.SetMaterial(HUDRTMat)
+	--render.DrawSphere(EyePos(), 59, 40, 40)
+
+	BOREAL_ALYPH_HUD_MODEL:SetMaterial('!boreal-alyph-hud-composite')
+	local ang = EyeAngles() + Angle(20, 0, 180)
+	local add = Vector(1, 0, 1.5)
+	add:Rotate(ang)
+	BOREAL_ALYPH_HUD_MODEL:SetPos(EyePos() + add)
+	BOREAL_ALYPH_HUD_MODEL:SetAngles(ang)
+	BOREAL_ALYPH_HUD_MODEL:DrawModel()
+
+	render.CullMode(MATERIAL_CULLMODE_CCW)
+
+	cam.End3D()
+	]]
 
 	--render.OverrideBlend(false)
 
@@ -293,3 +491,4 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 		surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0, 0, 1, 1)
 	end]]
 end
+]==]

@@ -21,18 +21,31 @@
 local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
 local surface = surface
 local ScreenSize = ScreenSize
-
+local Matrix = Matrix
+local Vector = Vector
+local Angle = Angle
 local POS_HEALTH = BOREAL_ALYPH_HUD:DefineStaticPosition('health', 0.04, 0.87)
 
 function BOREAL_ALYPH_HUD:PaintHealth()
 	if not self:GetVarAlive() then return end
-	local x, y = POS_HEALTH()
+	local x, y = 0, 0
+
+	local def = Matrix()
+	def:Translate(Vector(POS_HEALTH()))
+
+	if self.ENABLE_FX:GetBool() then
+		def:Scale(Vector(1.2, 1))
+		def:Rotate(Angle(0, -6))
+		def:SetField(1, 2, -0.1)
+	end
+
+	self:PreDrawFX(def)
 
 	surface.SetFont(self.HealthCounterIcon.REGULAR)
 
 	local padding = ScreenSize(self.DEF_PADDING)
 	local barHeight = ScreenSize(self.BAR_DEF_HEIGHT)
-	local barWidth = ScreenSize(self.BAR_DEF_WIDTH):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2)
+	local barWidth = ScreenSize(self.BAR_DEF_WIDTH):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2 + ScreenSize(10))
 
 	local w, h = surface.GetTextSize('+')
 
@@ -56,8 +69,10 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
 
 	if self:GetVarArmor() > 0 then
-		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
+		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y + (self.ENABLE_FX:GetBool() and ScreenSize(3) or 0))
 	end
+
+	self:PostDrawFX(true)
 end
 
 function BOREAL_ALYPH_HUD:PaintArmor(x, y)
