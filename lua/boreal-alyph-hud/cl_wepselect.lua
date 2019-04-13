@@ -91,6 +91,13 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 					surface.DrawRect(x, y, aSquareW, aSquareH)
 
 					weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 2, aSquareH - inpadding * 2, alpha)
+
+					surface.SetFont(self.SelectorSmallNumbers.REGULAR)
+					local text = getPrintName(weapon)
+					local tw, th = surface.GetTextSize(text)
+
+					draw.DrawText(text, self.SelectorSmallNumbers.REGULAR, x + inpadding, y + aSquareH - th - inpadding, inactive:ModifyAlpha(255), TEXT_ALIGN_LEFT)
+
 					y = y + ypadding + aSquareH
 				else
 					surface.SetDrawColor(inactive)
