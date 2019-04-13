@@ -35,7 +35,7 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 
 	if self.ENABLE_FX:GetBool() then
 		def:Scale(Vector(1.2, 1))
-		def:Rotate(Angle(0, -6))
+		def:Rotate(Angle(0, -3))
 		def:SetField(1, 2, -0.1)
 	end
 
@@ -69,7 +69,7 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
 
 	if self:GetVarArmor() > 0 then
-		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y + (self.ENABLE_FX:GetBool() and ScreenSize(3) or 0))
+		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y + (self.ENABLE_FX:GetBool() and ScreenSize(1.5) or 0))
 	end
 
 	self:PostDrawFX(true)

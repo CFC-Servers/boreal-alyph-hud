@@ -35,7 +35,7 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 
 	if self.ENABLE_FX:GetBool() then
 		def:Scale(Vector(1.1, 1))
-		def:Rotate(Angle(0, 6))
+		def:Rotate(Angle(0, 3))
 		def:SetField(1, 2, 0.1)
 	end
 
@@ -64,7 +64,7 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 
 	self:PreDrawFX(def)
 	local x2, y2 = self:DrawSecondaryAmmo(0, 0)
-	self:DrawPrimaryAmmo(x2, y2 + ScreenSize(3))
+	self:DrawPrimaryAmmo(x2, y2 + ScreenSize(1.5))
 	self:PostDrawFX(true)
 end
 
