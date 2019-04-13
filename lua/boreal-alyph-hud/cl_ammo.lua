@@ -64,7 +64,7 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 
 	self:PreDrawFX(def)
 	local x2, y2 = self:DrawSecondaryAmmo(0, 0)
-	self:DrawPrimaryAmmo(x2, y2 + ScreenSize(1.5))
+	self:DrawPrimaryAmmo(x2, y2 + ScreenSize(1))
 	self:PostDrawFX(true)
 end
 

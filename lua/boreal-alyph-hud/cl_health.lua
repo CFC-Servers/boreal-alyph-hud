@@ -69,7 +69,7 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
 
 	if self:GetVarArmor() > 0 then
-		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y + (self.ENABLE_FX:GetBool() and ScreenSize(1.5) or 0))
+		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y + (self.ENABLE_FX:GetBool() and ScreenSize(1) or 0))
 	end
 
 	self:PostDrawFX(true)
