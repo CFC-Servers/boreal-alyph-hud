@@ -74,10 +74,10 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 	local col = self.AmmoColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.AmmoColor.a)
 
 	surface.SetTextColor(col)
-	local barWidth = ScreenSize(40) -- Althrough there is no bar in gmod, we still use this for padding
-	-- scratch that, we got clip
+	local barWidth
 
 	if not self:ShouldDisplayAmmoReady2() and self:ShouldDisplayAmmoStored2() then
+		barWidth = ScreenSize(40)
 		local w1, h1 = surface.GetTextSize(ammo2)
 		local totalWidth = w1
 
@@ -92,9 +92,10 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 		return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
 	end
 
+	barWidth = ScreenSize(self:GetDisplayMaxClip2() > 10 and 80 or 40)
+
 	ammo2 = '/' .. ammo2
 
-	local barWidth = ScreenSize(40)
 	local w1, h1 = surface.GetTextSize(clip2)
 	local totalWidth = w1
 	surface.SetFont(self.AmmoCounterStored.REGULAR)
