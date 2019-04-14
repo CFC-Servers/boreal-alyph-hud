@@ -81,7 +81,7 @@ local function refreshRT()
 	end
 
 	local textureFlags = 0
-	textureFlags = textureFlags + 16 -- anisotropic
+	--textureFlags = textureFlags + 16 -- anisotropic
 	textureFlags = textureFlags + 256 -- no mipmaps
 	textureFlags = textureFlags + 2048 -- Texture is procedural
 	textureFlags = textureFlags + 32768 -- Texture is a render target
@@ -97,6 +97,7 @@ local function refreshRT()
 		['$color'] = '1 1 1',
 		['$color2'] = '1 1 1',
 		['$alpha'] = '1',
+		['$nolod'] = '1',
 		['$additive'] = '0',
 	})
 
@@ -108,6 +109,7 @@ local function refreshRT()
 		['$halflambert'] = '1',
 		['$color'] = '1 0 1',
 		['$alpha'] = '0.75',
+		['$nolod'] = '1',
 		['$additive'] = '1',
 	})
 
@@ -127,6 +129,7 @@ local function refreshRT()
 		['$halflambert'] = '1',
 		['$color'] = '0 1 0',
 		['$alpha'] = '0.75',
+		['$nolod'] = '1',
 		['$additive'] = '0',
 	})
 
