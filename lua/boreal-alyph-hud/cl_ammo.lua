@@ -75,13 +75,21 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 
 	surface.SetTextColor(col)
 	local barWidth
+	local onlyOne1 = not self:ShouldDisplayAmmoReady2() and self:ShouldDisplayAmmoStored2()
+	local onlyOne2 = self:ShouldDisplayAmmoReady2() and not self:ShouldDisplayAmmoStored2()
 
-	if not self:ShouldDisplayAmmoReady2() and self:ShouldDisplayAmmoStored2() then
+	if onlyOne1 or onlyOne2 then
 		barWidth = ScreenSize(40)
+
+		if onlyOne2 then
+			ammo2 = clip2
+		end
+
 		local w1, h1 = surface.GetTextSize(ammo2)
 		local totalWidth = w1
 
 		surface.SetTextPos(x - w1, y)
+
 		surface.DrawText(ammo2)
 
 		barWidth = barWidth:max(totalWidth)
