@@ -45,7 +45,7 @@ function BOREAL_ALYPH_HUD:PaintAmmo()
 	end
 
 	local x2, y2 = self:DrawSecondaryAmmo(x, y)
-	self:DrawPrimaryAmmo(x2, y2 + ScreenSize(1))
+	self:DrawPrimaryAmmo(x2, y2)
 end
 
 function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
@@ -110,7 +110,7 @@ end
 
 function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	local totalWidth = 0
-	local barWidth = ScreenSize(self.BAR_AMMO_WIDTH)
+	local barWidth = ScreenSize(self.BAR_AMMO_WIDTH:GetFloat())
 	local clip1, ammo1 = self:GetDisplayClip1(), self:GetDisplayAmmo1()
 	local w2, h2 = 0, 0
 

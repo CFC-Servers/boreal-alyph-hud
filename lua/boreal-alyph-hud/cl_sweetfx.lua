@@ -55,10 +55,13 @@ BOREAL_ALYPH_HUD.ENABLE_FX_SCANLINES = BOREAL_ALYPH_HUD:CreateConVar('fx_scanlin
 BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation', '1', 'Enable abberation')
 BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation_r', '1', 'Enable realistic abberation. Only have effect with distort on')
 BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT = BOREAL_ALYPH_HUD:CreateConVar('fx_distort', '1', 'Enable distort')
+BOREAL_ALYPH_HUD.FX_DEBUG = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_debug', '0', 'Draw pieces of distortion')
 
 local SCREEN_POLIES = {}
 local SCREEN_POLIES1 = {}
 local SCREEN_POLIES2 = {}
+
+BOREAL_ALYPH_HUD.FX_AUTO_PADDING = 15
 
 local function refreshRT()
 	local w, h = ScrW(), ScrH()
@@ -85,7 +88,7 @@ local function refreshRT()
 	textureFlags = textureFlags + 32768 -- Texture is a render target
 	-- textureFlags = textureFlags + 67108864 -- Usable as a vertex texture
 
-	HUDRT = GetRenderTargetEx('boreal-alyph-hud-hudrt1111', RTW, RTH, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_ONLY, textureFlags, CREATERENDERTARGETFLAGS_UNFILTERABLE_OK, IMAGE_FORMAT_RGBA8888)
+	HUDRT = GetRenderTargetEx('boreal-alyph-hud-hudrt-' .. RTW .. '-' .. RTH, RTW, RTH, RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_ONLY, textureFlags, CREATERENDERTARGETFLAGS_UNFILTERABLE_OK, IMAGE_FORMAT_RGBA8888)
 
 	HUDRTMat = CreateMaterial('boreal-alyph-hud-hudrt', 'UnlitGeneric', {
 		['$basetexture'] = 'models/debug/debugwhite',
@@ -126,11 +129,20 @@ local function refreshRT()
 	HUDRTMat1:SetVector('$color', Color(255, 0, 0):ToVector())
 	HUDRTMat2:SetVector('$color', Color(0, 255, 0):ToVector())
 
-	local paddingy = -ScreenSize(15)
+	local paddingy = -ScreenSize(1)
+	--local distortAmount = ScreenSize(30) * 1000
+	local distortAmount = ScreenSize(30)
+	local points = {0, h * 0.04, h * 0.07, h * 0.08, h * 0.09, h * 0.08, h * 0.07, h * 0.04, 0}
 
 	for x = 0, w + 10, 10 do
-		local pi1 = math.sin((x - w) / w * math.pi) * 70
-		local pi2 = math.sin(((x + 10) - w) / w * math.pi) * 70
+		--local pi1 = -math.pow(math.sin(x:progression(0, w) * math.pi) * distortAmount, 1 / 3) * 1.3
+		--local pi2 = -math.pow(math.sin((x + 10):progression(0, w) * math.pi) * distortAmount, 1 / 3) * 1.3
+
+		--local pi1 = -math.sin(x:progression(0, w) * math.pi) * distortAmount
+		--local pi2 = -math.sin((x + 10):progression(0, w) * math.pi) * distortAmount
+
+		local pi1 = -math.tbezier(x:progression(0, w), points)
+		local pi2 = -math.tbezier((x + 10):progression(0, w), points)
 
 		table.insert(SCREEN_POLIES, {
 			{x = x, y = -pi1 + paddingy, u = x / RTW, v = 0},
@@ -260,6 +272,14 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 
 		for i, poly in ipairs(SCREEN_POLIES) do
 			surface.DrawPoly(poly)
+		end
+
+		if self.FX_DEBUG:GetBool() then
+			surface.SetDrawColor(127, 127, 127)
+
+			for i, poly in ipairs(SCREEN_POLIES) do
+				DLib.HUDCommons.DrawPolyFrame(poly)
+			end
 		end
 	else
 		if self.ENABLE_FX_ABBERATION:GetBool() then

@@ -60,6 +60,11 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 
 	local width = ScreenSize(self.SELECTOR_SQUARE_INACTIVE_W) * (not deny and 5 or 6) + ScreenSize(self.SELECTOR_SQUARE_ACTIVE_W) * (not deny and 1 or 0)
 	local x, y = POS_SELECTOR()
+
+	if self.ENABLE_FX:GetBool() and self.ENABLE_FX_DISTORT:GetBool() then
+		y = y - ScreenSize(self.FX_AUTO_PADDING)
+	end
+
 	local padding = ScreenSize(self.SELECTOR_SQUARE_SPACE)
 	local inpadding = ScreenSize(self.SELECTOR_SQUARE_PADDING)
 	local ypadding = ScreenSize(self.SELECTOR_SQUARE_SPACE_H)

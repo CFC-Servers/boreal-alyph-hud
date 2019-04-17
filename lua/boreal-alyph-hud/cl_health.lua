@@ -34,7 +34,7 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 
 	local padding = ScreenSize(self.DEF_PADDING)
 	local barHeight = ScreenSize(self.BAR_DEF_HEIGHT)
-	local barWidth = ScreenSize(self.BAR_DEF_WIDTH):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2 + ScreenSize(10))
+	local barWidth = ScreenSize(self.BAR_DEF_WIDTH:GetFloat()):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2 + ScreenSize(10))
 
 	local w, h = surface.GetTextSize('+')
 
@@ -71,7 +71,7 @@ function BOREAL_ALYPH_HUD:PaintArmor(x, y)
 
 	local padding = ScreenSize(self.DEF_PADDING)
 	local barHeight = ScreenSize(self.BAR_DEF_HEIGHT)
-	local barWidth = ScreenSize(self.BAR_DEF_WIDTH):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2)
+	local barWidth = ScreenSize(self.BAR_DEF_WIDTH:GetFloat()):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2)
 
 	local w, h = surface.GetTextSize('*')
 
