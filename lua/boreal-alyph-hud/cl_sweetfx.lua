@@ -53,7 +53,12 @@ local RTW, RTH
 BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD ~~SweetFX~~ FX')
 BOREAL_ALYPH_HUD.ENABLE_FX_SCANLINES = BOREAL_ALYPH_HUD:CreateConVar('fx_scanlines', '1', 'Enable scanlines')
 BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation', '1', 'Enable abberation')
+BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation_r', '1', 'Enable realistic abberation. Only have effect with distort on')
 BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT = BOREAL_ALYPH_HUD:CreateConVar('fx_distort', '1', 'Enable distort')
+
+local SCREEN_POLIES = {}
+local SCREEN_POLIES1 = {}
+local SCREEN_POLIES2 = {}
 
 local function refreshRT()
 	local w, h = ScrW(), ScrH()
@@ -120,26 +125,58 @@ local function refreshRT()
 	HUDRTMat2:SetTexture('$basetexture', HUDRT)
 	HUDRTMat1:SetVector('$color', Color(255, 0, 0):ToVector())
 	HUDRTMat2:SetVector('$color', Color(0, 255, 0):ToVector())
+
+	local paddingy = -ScreenSize(15)
+
+	for x = 0, w + 10, 10 do
+		local pi1 = math.sin((x - w) / w * math.pi) * 70
+		local pi2 = math.sin(((x + 10) - w) / w * math.pi) * 70
+
+		table.insert(SCREEN_POLIES, {
+			{x = x, y = -pi1 + paddingy, u = x / RTW, v = 0},
+			{x = x + 10, y = -pi2 + paddingy, u = (x + 10) / RTW, v = 0},
+			{x = x + 10, y = pi2 + h - paddingy, u = (x + 10) / RTW, v = h / RTH},
+			{x = x, y = pi1 + h - paddingy, u = x / RTW, v = h / RTH},
+		})
+
+		local abberation = 0.0003 * 3 * (x < w / 3 and (1 - x:progression(0, w / 3)) or x > w * 0.66 and x:progression(w * 0.66, w) or (1 / 3))
+
+		if not BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R:GetBool() then
+			abberation = 0.0003
+		end
+
+		table.insert(SCREEN_POLIES1, {
+			{x = x, y = -pi1 + paddingy, u = x / RTW + abberation, v = 0},
+			{x = x + 10, y = -pi2 + paddingy, u = (x + 10) / RTW + abberation, v = 0},
+			{x = x + 10, y = pi2 + h - paddingy, u = (x + 10) / RTW + abberation, v = h / RTH},
+			{x = x, y = pi1 + h - paddingy, u = x / RTW + abberation, v = h / RTH},
+		})
+
+		table.insert(SCREEN_POLIES2, {
+			{x = x, y = -pi1 + paddingy, u = x / RTW - abberation, v = 0},
+			{x = x + 10, y = -pi2 + paddingy, u = (x + 10) / RTW - abberation, v = 0},
+			{x = x + 10, y = pi2 + h - paddingy, u = (x + 10) / RTW - abberation, v = h / RTH},
+			{x = x, y = pi1 + h - paddingy, u = x / RTW - abberation, v = h / RTH},
+		})
+	end
 end
 
 timer.Simple(0, refreshRT)
 hook.Add('ScreenResolutionChanged', 'BAHUD.RefreshRT', refreshRT)
+cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R:GetName(), refreshRT, 'BAHUD')
 
 local scanlines = Material('sprops/trans/misc/tracks_wood')
 
-function BOREAL_ALYPH_HUD:PreDrawFX(pushMatrix)
-	if not HUDRT or not self.ENABLE_FX:GetBool() then
-		if pushMatrix then
-			cam.PushModelMatrix(pushMatrix)
+function BOREAL_ALYPH_HUD:GetFXMaterial()
+	return HUDRTMat
+end
 
-			render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-			render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+function BOREAL_ALYPH_HUD:GetFXRenderTarget()
+	return HUDRT
+end
 
-			surface.DisableClipping(true)
-		end
-
-		return
-	end
+function BOREAL_ALYPH_HUD:PreHUDPaint()
+	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
 
 	render.PushRenderTarget(HUDRT)
 	render.OverrideColorWriteEnable(true, true)
@@ -148,14 +185,10 @@ function BOREAL_ALYPH_HUD:PreDrawFX(pushMatrix)
 	render.Clear(0, 0, 0, 0, true, true)
 	cam.Start2D()
 
-	if pushMatrix then
-		cam.PushModelMatrix(pushMatrix)
+	render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+	render.PushFilterMin(TEXFILTER.ANISOTROPIC)
 
-		render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-		render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-
-		surface.DisableClipping(true)
-	end
+	surface.DisableClipping(true)
 
 	if self.ENABLE_FX_SCANLINES:GetBool() then
 		render.SetStencilEnable(true)
@@ -172,37 +205,8 @@ function BOREAL_ALYPH_HUD:PreDrawFX(pushMatrix)
 	end
 end
 
-function BOREAL_ALYPH_HUD:PostDrawFX2()
+function BOREAL_ALYPH_HUD:PostHUDPaint()
 	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
-
-	surface.SetDrawColor(255, 255, 255)
-
-	if self.ENABLE_FX_ABBERATION:GetBool() then
-		surface.SetMaterial(HUDRTMat2)
-		surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
-
-		surface.SetMaterial(HUDRTMat1)
-		surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
-	end
-
-	--HUDRTMat:SetFloat('$alpha', 1)
-	HUDRTMat:SetFloat('$alpha', 0.7)
-	surface.SetMaterial(HUDRTMat)
-	surface.DrawTexturedRect(0, 0, RTW, RTH)
-end
-
-function BOREAL_ALYPH_HUD:PostDrawFX(matrixPushed)
-	if not HUDRT or not self.ENABLE_FX:GetBool() then
-		if matrixPushed then
-			render.PopFilterMag()
-			render.PopFilterMin()
-
-			cam.PopModelMatrix()
-			surface.DisableClipping(false)
-		end
-
-		return
-	end
 
 	if self.ENABLE_FX_SCANLINES:GetBool() then
 		render.SetStencilCompareFunction(STENCIL_EQUAL)
@@ -210,35 +214,22 @@ function BOREAL_ALYPH_HUD:PostDrawFX(matrixPushed)
 
 		render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
 
-		if matrixPushed then
-			surface.SetDrawColor(70, 70, 70, 70)
+		surface.SetDrawColor(70, 70, 70, 140)
 
-			local x1 = -ScrW() / 2
+		local x1 = ScrW()
 
-			for i = 1, ScrH(), 2 do
-				surface.DrawLine(x1, i, -x1, i)
-			end
-		else
-			surface.SetDrawColor(70, 70, 70, 140)
-
-			local x1 = ScrW()
-
-			for i = 1, ScrH(), 2 do
-				surface.DrawLine(0, i, x1, i)
-			end
+		for i = 1, ScrH(), 2 do
+			surface.DrawLine(0, i, x1, i)
 		end
 
 		render.OverrideBlend(false)
 		render.SetStencilEnable(false)
 	end
 
-	if matrixPushed then
-		render.PopFilterMag()
-		render.PopFilterMin()
+	render.PopFilterMag()
+	render.PopFilterMin()
 
-		cam.PopModelMatrix()
-		surface.DisableClipping(false)
-	end
+	surface.DisableClipping(false)
 
 	cam.End2D()
 
@@ -247,7 +238,39 @@ function BOREAL_ALYPH_HUD:PostDrawFX(matrixPushed)
 
 	render.PopRenderTarget()
 
-	if matrixPushed then
-		self:PostDrawFX2()
+	surface.SetDrawColor(255, 255, 255)
+	HUDRTMat:SetFloat('$alpha', 0.7)
+
+	if self.ENABLE_FX_DISTORT:GetBool() then
+		if self.ENABLE_FX_ABBERATION:GetBool() then
+			surface.SetMaterial(HUDRTMat1)
+
+			for i, poly in ipairs(SCREEN_POLIES1) do
+				surface.DrawPoly(poly)
+			end
+
+			surface.SetMaterial(HUDRTMat2)
+
+			for i, poly in ipairs(SCREEN_POLIES2) do
+				surface.DrawPoly(poly)
+			end
+		end
+
+		surface.SetMaterial(HUDRTMat)
+
+		for i, poly in ipairs(SCREEN_POLIES) do
+			surface.DrawPoly(poly)
+		end
+	else
+		if self.ENABLE_FX_ABBERATION:GetBool() then
+			surface.SetMaterial(HUDRTMat2)
+			surface.DrawTexturedRectUV(0, 0, RTW, RTH, 0.0005, 0, 1.0005, 1)
+
+			surface.SetMaterial(HUDRTMat1)
+			surface.DrawTexturedRectUV(0, 0, RTW, RTH, -0.0005, 0, 0.9995, 1)
+		end
+
+		surface.SetMaterial(HUDRTMat)
+		surface.DrawTexturedRect(0, 0, RTW, RTH)
 	end
 end

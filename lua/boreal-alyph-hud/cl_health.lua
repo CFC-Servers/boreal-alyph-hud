@@ -28,18 +28,7 @@ local POS_HEALTH = BOREAL_ALYPH_HUD:DefineStaticPosition('health', 0.04, 0.87)
 
 function BOREAL_ALYPH_HUD:PaintHealth()
 	if not self:GetVarAlive() then return end
-	local x, y = 0, 0
-
-	local def = Matrix()
-	def:Translate(Vector(POS_HEALTH()))
-
-	if self.ENABLE_FX:GetBool() and self.ENABLE_FX_DISTORT:GetBool() then
-		--def:Scale(Vector(1.2, 1))
-		def:Rotate(Angle(0, -3))
-		def:SetField(1, 2, -0.1)
-	end
-
-	self:PreDrawFX(def)
+	local x, y = POS_HEALTH()
 
 	surface.SetFont(self.HealthCounterIcon.REGULAR)
 
@@ -69,10 +58,8 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
 
 	if self:GetVarArmor() > 0 then
-		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y + (self.ENABLE_FX:GetBool() and ScreenSize(1) or 0))
+		self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
 	end
-
-	self:PostDrawFX(true)
 end
 
 function BOREAL_ALYPH_HUD:PaintArmor(x, y)
