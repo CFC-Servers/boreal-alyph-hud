@@ -67,6 +67,10 @@ local function refreshRT()
 	local w, h = ScrW(), ScrH()
 	RTW, RTH = 0, 0
 
+	SCREEN_POLIES = {}
+	SCREEN_POLIES1 = {}
+	SCREEN_POLIES2 = {}
+
 	for i = 4, 12 do
 		if math.pow(2, i) >= w then
 			RTW = math.pow(2, i)
@@ -130,19 +134,12 @@ local function refreshRT()
 	HUDRTMat2:SetVector('$color', Color(0, 255, 0):ToVector())
 
 	local paddingy = -ScreenSize(1)
-	--local distortAmount = ScreenSize(30) * 1000
 	local distortAmount = ScreenSize(30)
 	local points = {0, h * 0.04, h * 0.07, h * 0.08, h * 0.09, h * 0.08, h * 0.07, h * 0.04, 0}
 
 	for x = 0, w + 10, 10 do
-		--local pi1 = -math.pow(math.sin(x:progression(0, w) * math.pi) * distortAmount, 1 / 3) * 1.3
-		--local pi2 = -math.pow(math.sin((x + 10):progression(0, w) * math.pi) * distortAmount, 1 / 3) * 1.3
-
-		--local pi1 = -math.sin(x:progression(0, w) * math.pi) * distortAmount
-		--local pi2 = -math.sin((x + 10):progression(0, w) * math.pi) * distortAmount
-
-		local pi1 = -math.tbezier(x:progression(0, w), points)
-		local pi2 = -math.tbezier((x + 10):progression(0, w), points)
+		local pi1 = -x:progression(0, w):tbezier(points)
+		local pi2 = -(x + 10):progression(0, w):tbezier(points)
 
 		table.insert(SCREEN_POLIES, {
 			{x = x, y = -pi1 + paddingy, u = x / RTW, v = 0},
