@@ -28,6 +28,7 @@ local Angle = Angle
 local POS_AMMO = BOREAL_ALYPH_HUD:DefineStaticPosition('ammo', 0.96, 0.87)
 
 function BOREAL_ALYPH_HUD:PaintAmmo()
+	if not self:GetVarAlive() or not self:GetVarWearingSuit() then return end
 	local x, y = POS_AMMO()
 
 	if not self:ShouldDisplaySecondaryAmmo() then

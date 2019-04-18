@@ -27,7 +27,7 @@ local Angle = Angle
 local POS_HEALTH = BOREAL_ALYPH_HUD:DefineStaticPosition('health', 0.04, 0.87)
 
 function BOREAL_ALYPH_HUD:PaintHealth()
-	if not self:GetVarAlive() then return end
+	if not self:GetVarAlive() or not self:GetVarWearingSuit() then return end
 	local x, y = POS_HEALTH()
 
 	surface.SetFont(self.HealthCounterIcon.REGULAR)
