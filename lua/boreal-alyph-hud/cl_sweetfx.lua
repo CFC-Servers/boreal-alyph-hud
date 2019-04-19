@@ -50,12 +50,45 @@ almost died from aids while creating effects without shader access
 local HUDRT, HUDRTComposite, ScanlinesRT, HUDRTMat, HUDRTMat1, HUDRTMat2, HUDRTMat3, ScanlinesRTMat, HUDRTCompositeMat
 local RTW, RTH
 
-BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD ~~SweetFX~~ FX')
+BOREAL_ALYPH_HUD.ENABLE_FX = BOREAL_ALYPH_HUD:CreateConVar('fx', '1', 'Enable HUD ~~SweetFX~~ FX', false)
+
 BOREAL_ALYPH_HUD.ENABLE_FX_SCANLINES = BOREAL_ALYPH_HUD:CreateConVar('fx_scanlines', '1', 'Enable scanlines')
+
+BOREAL_ALYPH_HUD.ENABLE_FX_SCANLINES_T = BOREAL_ALYPH_HUD:CreateConVar('fx_scanlines_t', '140', 'Scanlines transparency', false, {
+	type = BOREAL_ALYPH_HUD.CONVAR_TYPE_NUM,
+	max = 255,
+	min = 0,
+	decimals = 0,
+})
+
 BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation', '1', 'Enable abberation')
-BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation_r', '1', 'Enable realistic abberation. Only have effect with distort on')
+
+BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_S = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation_s', '1', 'Abberation strength', false, {
+	type = BOREAL_ALYPH_HUD.CONVAR_TYPE_NUM,
+	max = 2,
+	min = -2,
+	decimals = 3,
+})
+
+BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation_r', '1', 'Enable realistic aberration. Only have effect with distort on')
+
+BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R_FADEOUT = BOREAL_ALYPH_HUD:CreateConVar('fx_abberation_r_f', '1', 'Realistic aberration fadeout multiplier', false, {
+	type = BOREAL_ALYPH_HUD.CONVAR_TYPE_NUM,
+	max = 6,
+	min = -6,
+	decimals = 3,
+})
+
 BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT = BOREAL_ALYPH_HUD:CreateConVar('fx_distort', '1', 'Enable distort')
-BOREAL_ALYPH_HUD.FX_DEBUG = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_debug', '0', 'Draw pieces of distortion')
+
+BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_m', '1', 'Distort multiplicator', false, {
+	type = BOREAL_ALYPH_HUD.CONVAR_TYPE_NUM,
+	max = 4,
+	min = -4,
+	decimals = 3,
+})
+
+BOREAL_ALYPH_HUD.FX_DEBUG = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_debug', '0', 'Draw pieces of distortion', true)
 
 local SCREEN_POLIES = {}
 local SCREEN_POLIES1 = {}
@@ -135,7 +168,10 @@ local function refreshRT()
 
 	local paddingy = -ScreenSize(1)
 	local distortAmount = ScreenSize(30)
-	local points = {0, h * 0.04, h * 0.07, h * 0.08, h * 0.09, h * 0.08, h * 0.07, h * 0.04, 0}
+	local mult = BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M:GetFloat(1)
+	local points = {0, h * 0.04 * mult, h * 0.07 * mult, h * 0.08 * mult, h * 0.09 * mult, h * 0.08 * mult, h * 0.07 * mult, h * 0.04 * mult, 0}
+	local astrength = BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_S:GetFloat()
+	local fadeout = BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R_FADEOUT:GetFloat()
 
 	for x = 0, w + 10, 10 do
 		local pi1 = -x:progression(0, w):tbezier(points)
@@ -148,10 +184,10 @@ local function refreshRT()
 			{x = x, y = pi1 + h - paddingy, u = x / RTW, v = h / RTH},
 		})
 
-		local abberation = 0.0003 * 3 * (x < w / 3 and (1 - x:progression(0, w / 3)) or x > w * 0.66 and x:progression(w * 0.66, w) or (1 / 3))
+		local abberation = 0.0003 * 3 * fadeout * (x < w / 3 and (1 - x:progression(0, w / 3)) or x > w * 0.66 and x:progression(w * 0.66, w) * fadeout or (1 / (fadeout * 3))) * astrength
 
 		if not BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R:GetBool() then
-			abberation = 0.0003
+			abberation = 0.0003 * astrength
 		end
 
 		table.insert(SCREEN_POLIES1, {
@@ -173,6 +209,9 @@ end
 timer.Simple(0, refreshRT)
 hook.Add('ScreenResolutionChanged', 'BAHUD.RefreshRT', refreshRT)
 cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R:GetName(), refreshRT, 'BAHUD')
+cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_S:GetName(), refreshRT, 'BAHUD')
+cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M:GetName(), refreshRT, 'BAHUD')
+cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R_FADEOUT:GetName(), refreshRT, 'BAHUD')
 
 local scanlines = Material('sprops/trans/misc/tracks_wood')
 
@@ -223,7 +262,7 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 
 		render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA, BLENDFUNC_ADD, BLEND_ZERO, BLEND_ONE, BLENDFUNC_ADD)
 
-		surface.SetDrawColor(70, 70, 70, 140)
+		surface.SetDrawColor(70, 70, 70, self.ENABLE_FX_SCANLINES_T:GetInt(140):clamp(0, 255))
 
 		local x1 = ScrW()
 
