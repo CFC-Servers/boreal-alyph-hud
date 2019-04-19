@@ -76,10 +76,17 @@ BOREAL_ALYPH_HUD.SelectorNames = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorNa
 	weight = 500
 })
 
+BOREAL_ALYPH_HUD.KillfeedFont = BOREAL_ALYPH_HUD:CreateScalableFont('Killfeed', {
+	font = 'Alte DIN 1451 Mittelschrift',
+	size = 18,
+	weight = 500
+})
+
 BOREAL_ALYPH_HUD.HealthColor = Color(255, 176, 0, 160)
 BOREAL_ALYPH_HUD.CriticalHealthColor = Color(185, 45, 45)
 BOREAL_ALYPH_HUD.ArmorColor = Color(255, 176, 0, 160)
 BOREAL_ALYPH_HUD.AmmoColor = Color(255, 176, 0, 160)
+BOREAL_ALYPH_HUD.KillfeedGenericColor = Color(255, 176, 0)
 
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
