@@ -36,7 +36,7 @@ local table = table
 local POS_KILLFEED = BOREAL_ALYPH_HUD:DefineStaticPosition('killfeed', 0.85, 0.04)
 
 function BOREAL_ALYPH_HUD:DrawDeathNotice(x, y)
-	if not self.ENABLE_FX:GetBool() or not self.REPLACE_KILLFEED:GetBool() then return end
+	if not self.FORCE_REPLACE_KILLFEED:GetBool() and (not self.ENABLE_FX:GetBool() or not self.REPLACE_KILLFEED:GetBool()) then return end
 	return true
 end
 
