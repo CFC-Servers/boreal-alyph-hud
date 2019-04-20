@@ -35,7 +35,7 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy, noheight)
 	y = y:floor()
 
 	local width = ScreenSize(1):max(3):ceil()
-	local height = (ScreenSize(6):max(6) * (0.7 + accuracy * 0.3):max(1)):round()
+	local height = (ScreenSize(6) * (0.7 + accuracy * 0.3):max(1)):round():max(6)
 
 	if noheight then
 		height = width
@@ -45,7 +45,6 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy, noheight)
 	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2):round()
 
 	local accurateW = width % 2 + (width / 3):floor() - 1
-	local accuratePadding = padding % 2 + (padding / 3):floor() - 1
 
 	local centerX, centerY = x - accurateW + shadowPadding, y - accurateW + shadowPadding
 
@@ -81,8 +80,8 @@ end
 function BOREAL_ALYPH_HUD:DrawCrosshairShotgun(x, y, accuracy)
 	local width = ScreenSize(1):ceil()
 	local height = ScreenSize(6):ceil():max(6) * (0.7 + accuracy * 0.3):max(1)
-	local size = (accuracy * ScreenSize(38)):max(42)
-	size = size - size % 7
+	local size = (accuracy * ScreenSize(38))
+	--size = size - size % 7
 	local inLen = (size * 0.05):max(2)
 	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2)
 
