@@ -18,21 +18,26 @@
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
 
-if SERVER then
-	AddCSLuaFile('boreal-alyph-hud/cl_health.lua')
-	AddCSLuaFile('boreal-alyph-hud/cl_init.lua')
-	AddCSLuaFile('boreal-alyph-hud/cl_ammo.lua')
-	AddCSLuaFile('boreal-alyph-hud/cl_wepselect.lua')
-	AddCSLuaFile('boreal-alyph-hud/cl_sweetfx.lua')
-	AddCSLuaFile('boreal-alyph-hud/cl_killfeed.lua')
-	AddCSLuaFile('boreal-alyph-hud/cl_crosshair.lua')
-	return
-end
+local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
 
-include('boreal-alyph-hud/cl_init.lua')
-include('boreal-alyph-hud/cl_health.lua')
-include('boreal-alyph-hud/cl_ammo.lua')
-include('boreal-alyph-hud/cl_wepselect.lua')
-include('boreal-alyph-hud/cl_sweetfx.lua')
-include('boreal-alyph-hud/cl_killfeed.lua')
-include('boreal-alyph-hud/cl_crosshair.lua')
+BOREAL_ALYPH_HUD:RegisterCrosshairHandle()
+
+function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
+	x = x:ceil()
+	y = y:ceil()
+	local width = ScreenSize(1):ceil()
+	local height = ScreenSize(6):ceil():max(6)
+	local padding = (accuracy * ScreenSize(4)):floor()
+
+	local accurateW = width % 2 + (width / 3):floor() - 1
+	local accuratePadding = padding % 2 + (padding / 3):floor() - 1
+
+	surface.SetDrawColor(self.CrosshairColor)
+	surface.DrawRect(x - accurateW, y - accurateW, width, width)
+
+	surface.DrawRect(x - accurateW, y - height - padding, width, height)
+	surface.DrawRect(x - accurateW, y + padding + 1, width, height)
+
+	surface.DrawRect(x - height - padding, y - accurateW, height, width)
+	surface.DrawRect(x + padding + 1, y - accurateW, height, width)
+end

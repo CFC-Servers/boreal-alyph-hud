@@ -104,7 +104,7 @@ local function refreshRT()
 	SCREEN_POLIES1 = {}
 	SCREEN_POLIES2 = {}
 
-	for i = 4, 12 do
+	--[[for i = 4, 12 do
 		if math.pow(2, i) >= w then
 			RTW = math.pow(2, i)
 			break
@@ -116,7 +116,9 @@ local function refreshRT()
 			RTH = math.pow(2, i)
 			break
 		end
-	end
+	end]]
+
+	RTW, RTH = w, h
 
 	local textureFlags = 0
 	--textureFlags = textureFlags + 16 -- anisotropic

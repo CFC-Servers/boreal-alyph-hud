@@ -18,6 +18,8 @@
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
 
+local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
+
 BOREAL_ALYPH_HUD.REPLACE_KILLFEED = BOREAL_ALYPH_HUD:CreateConVar('fx_replace_killfeed', '1', 'Replace killfeed when FX is on. This usually improve performance, since this one is :optimized:')
 BOREAL_ALYPH_HUD.FORCE_REPLACE_KILLFEED = BOREAL_ALYPH_HUD:CreateConVar('force_replace_killfeed', '0', 'Always replace killfeed')
 
