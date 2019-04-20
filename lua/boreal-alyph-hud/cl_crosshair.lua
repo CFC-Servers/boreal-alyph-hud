@@ -23,6 +23,8 @@ local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
 BOREAL_ALYPH_HUD:RegisterCrosshairHandle()
 
 function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
+	self:InterruptFX()
+
 	x = x:ceil()
 	y = y:ceil()
 	local width = ScreenSize(1):ceil()
@@ -40,4 +42,6 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
 
 	surface.DrawRect(x - height - padding, y - accurateW, height, width)
 	surface.DrawRect(x + padding + 1, y - accurateW, height, width)
+
+	self:ContinueFX()
 end
