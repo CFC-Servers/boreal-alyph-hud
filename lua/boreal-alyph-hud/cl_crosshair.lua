@@ -45,3 +45,22 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
 
 	self:ContinueFX()
 end
+
+local WEP, R, X, Y
+
+local function closure()
+	R = WEP:DoDrawCrosshair(X, Y) == true
+end
+
+function BOREAL_ALYPH_HUD:HandleDoDrawCrosshair(x, y, weapon)
+	self:InterruptFX()
+
+	X, Y = x, y
+	WEP = weapon
+	R = false
+	ProtectedCall(closure)
+
+	self:ContinueFX()
+
+	return R
+end
