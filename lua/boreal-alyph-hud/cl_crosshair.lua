@@ -30,11 +30,16 @@ local color_black = color_black
 BOREAL_ALYPH_HUD:RegisterCrosshairHandle()
 local SHADOW_PADDING = 1
 
-function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
+function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy, noheight)
 	x = x:ceil()
 	y = y:ceil()
 	local width = ScreenSize(1):ceil()
 	local height = ScreenSize(6):ceil():max(6) * (0.7 + accuracy * 0.3):max(1)
+
+	if noheight then
+		height = width
+	end
+
 	local padding = (accuracy * ScreenSize(4)):floor()
 	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2)
 
@@ -58,6 +63,14 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
 
 	surface.DrawRect(x - height - padding, y - accurateW, height, width)
 	surface.DrawRect(x + padding + 1, y - accurateW, height, width)
+end
+
+function BOREAL_ALYPH_HUD:DrawCrosshairRifle(x, y, accuracy)
+	self:DrawCrosshairGeneric(x, y, accuracy, true)
+end
+
+function BOREAL_ALYPH_HUD:DrawCrosshairRevolver(x, y, accuracy)
+	self:DrawCrosshairGeneric(x, y, accuracy, true)
 end
 
 function BOREAL_ALYPH_HUD:DrawCrosshairShotgun(x, y, accuracy)
