@@ -210,6 +210,7 @@ end
 
 timer.Simple(0, refreshRT)
 hook.Add('ScreenResolutionChanged', 'BAHUD.RefreshRT', refreshRT)
+hook.Add('InvalidateMaterialCache', 'BAHUD.RefreshRT', refreshRT)
 cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R:GetName(), refreshRT, 'BAHUD')
 cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_S:GetName(), refreshRT, 'BAHUD')
 cvars.AddChangeCallback(BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M:GetName(), refreshRT, 'BAHUD')
