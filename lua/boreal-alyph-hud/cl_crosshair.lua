@@ -34,36 +34,40 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy, noheight)
 	x = x:floor()
 	y = y:floor()
 
-	local width = ScreenSize(1):ceil()
-	local height = ScreenSize(6):ceil():max(6) * (0.7 + accuracy * 0.3):max(1)
+	local width = ScreenSize(1):max(3):ceil()
+	local height = (ScreenSize(6):max(6) * (0.7 + accuracy * 0.3):max(1)):round()
 
 	if noheight then
 		height = width
 	end
 
-	local padding = (accuracy * ScreenSize(4)):floor()
-	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2)
+	local padding = (accuracy * ScreenSize(4)):round()
+	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2):round()
 
 	local accurateW = width % 2 + (width / 3):floor() - 1
 	local accuratePadding = padding % 2 + (padding / 3):floor() - 1
 
+	local centerX, centerY = x - accurateW + shadowPadding, y - accurateW + shadowPadding
+
 	surface.SetDrawColor(color_black)
-	surface.DrawRect(x - accurateW + shadowPadding, y - accurateW + shadowPadding, width, width)
+	surface.DrawRect(centerX, centerY, width, width)
 
-	surface.DrawRect(x - accurateW + shadowPadding, y - height - padding + shadowPadding, width, height)
-	surface.DrawRect(x - accurateW + shadowPadding, y + padding + 1 + shadowPadding, width, height)
+	surface.DrawRect(centerX, centerY - height - padding, width, height)
+	surface.DrawRect(centerX, centerY + padding + width, width, height)
 
-	surface.DrawRect(x - height - padding + shadowPadding, y - accurateW + shadowPadding, height, width)
-	surface.DrawRect(x + padding + 1 + shadowPadding, y - accurateW + shadowPadding, height, width)
+	surface.DrawRect(centerX - height - padding, centerY, height, width)
+	surface.DrawRect(centerX + padding + width, centerY, height, width)
+
+	centerX, centerY = centerX - shadowPadding, centerY - shadowPadding
 
 	surface.SetDrawColor(self.CrosshairColor)
-	surface.DrawRect(x - accurateW, y - accurateW, width, width)
+	surface.DrawRect(centerX, centerY, width, width)
 
-	surface.DrawRect(x - accurateW, y - height - padding, width, height)
-	surface.DrawRect(x - accurateW, y + padding + 1, width, height)
+	surface.DrawRect(centerX, centerY - height - padding, width, height)
+	surface.DrawRect(centerX, centerY + padding + width, width, height)
 
-	surface.DrawRect(x - height - padding, y - accurateW, height, width)
-	surface.DrawRect(x + padding + 1, y - accurateW, height, width)
+	surface.DrawRect(centerX - height - padding, centerY, height, width)
+	surface.DrawRect(centerX + padding + width, centerY, height, width)
 end
 
 function BOREAL_ALYPH_HUD:DrawCrosshairRifle(x, y, accuracy)
