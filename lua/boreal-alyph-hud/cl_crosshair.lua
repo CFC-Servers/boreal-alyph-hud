@@ -38,7 +38,7 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy, noheight)
 	local height = (ScreenSize(6) * (0.7 + accuracy * 0.3):max(1)):round():max(6)
 
 	if noheight then
-		height = width
+		height = (ScreenSize(2) * (accuracy - 1)):round():max(width)
 	end
 
 	local padding = (accuracy * ScreenSize(4)):round()
