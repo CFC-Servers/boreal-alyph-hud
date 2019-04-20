@@ -225,8 +225,17 @@ function BOREAL_ALYPH_HUD:GetFXRenderTarget()
 	return HUDRT
 end
 
-function BOREAL_ALYPH_HUD:PreHUDPaint()
-	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
+local function closure()
+	BOREAL_ALYPH_HUD:PaintFXGroup()
+end
+
+local ProtectedCall = ProtectedCall
+
+function BOREAL_ALYPH_HUD:FXRenderProxy()
+	if not HUDRT or not self.ENABLE_FX:GetBool() then
+		self:PaintFXGroup()
+		return
+	end
 
 	render.PushRenderTarget(HUDRT)
 	render.OverrideColorWriteEnable(true, true)
@@ -253,40 +262,8 @@ function BOREAL_ALYPH_HUD:PreHUDPaint()
 		render.SetStencilTestMask(255)
 		render.SetStencilReferenceValue(1)
 	end
-end
 
-function BOREAL_ALYPH_HUD:InterruptFX()
-	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
-	render.PopFilterMag()
-	render.PopFilterMin()
-
-	surface.DisableClipping(false)
-
-	cam.End2D()
-
-	render.OverrideAlphaWriteEnable(false)
-	render.OverrideColorWriteEnable(false)
-
-	render.PopRenderTarget()
-end
-
-function BOREAL_ALYPH_HUD:ContinueFX()
-	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
-
-	render.PushRenderTarget(HUDRT)
-	render.OverrideColorWriteEnable(true, true)
-	render.OverrideAlphaWriteEnable(true, true)
-
-	cam.Start2D()
-
-	render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-	render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-
-	surface.DisableClipping(true)
-end
-
-function BOREAL_ALYPH_HUD:PostHUDPaint()
-	if not HUDRT or not self.ENABLE_FX:GetBool() then return end
+	ProtectedCall(closure)
 
 	if self.ENABLE_FX_SCANLINES:GetBool() then
 		render.SetStencilCompareFunction(STENCIL_EQUAL)
@@ -362,3 +339,5 @@ function BOREAL_ALYPH_HUD:PostHUDPaint()
 		surface.DrawTexturedRect(0, 0, RTW, RTH)
 	end
 end
+
+BOREAL_ALYPH_HUD:AddPaintHook('FXRenderProxy')

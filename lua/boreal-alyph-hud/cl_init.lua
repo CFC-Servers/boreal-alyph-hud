@@ -95,6 +95,8 @@ BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 6
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
 BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14
 
+BOREAL_ALYPH_HUD:DefinePaintGroup('FX', false)
+
 function BOREAL_ALYPH_HUD:HUDShouldDraw(str)
 	if str == 'CHudAmmo' or str == 'CHudBattery' or str == 'CHudHealth' or str == 'CHudSecondaryAmmo' then return false end
 end

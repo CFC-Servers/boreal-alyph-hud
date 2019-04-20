@@ -148,4 +148,4 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth * self:GetAmmoFillage1(), ScreenSize(self.BAR_DEF_HEIGHT))
 end
 
-BOREAL_ALYPH_HUD:AddPaintHook('PaintAmmo')
+BOREAL_ALYPH_HUD:AddFXPaintHook('PaintAmmo')

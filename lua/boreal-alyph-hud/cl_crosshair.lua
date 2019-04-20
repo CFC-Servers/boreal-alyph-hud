@@ -19,20 +19,36 @@
 -- DEALINGS IN THE SOFTWARE.
 
 local BOREAL_ALYPH_HUD = BOREAL_ALYPH_HUD
+local ScreenSize = ScreenSize
+local DLib = DLib
+local HUDCommons = DLib.HUDCommons
+local surface = surface
+local ProtectedCall = ProtectedCall
+local draw = draw
+local color_black = color_black
 
 BOREAL_ALYPH_HUD:RegisterCrosshairHandle()
+local SHADOW_PADDING = 1
 
 function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
-	self:InterruptFX()
-
 	x = x:ceil()
 	y = y:ceil()
 	local width = ScreenSize(1):ceil()
-	local height = ScreenSize(6):ceil():max(6)
+	local height = ScreenSize(6):ceil():max(6) * (0.7 + accuracy * 0.3):max(1)
 	local padding = (accuracy * ScreenSize(4)):floor()
+	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2)
 
 	local accurateW = width % 2 + (width / 3):floor() - 1
 	local accuratePadding = padding % 2 + (padding / 3):floor() - 1
+
+	surface.SetDrawColor(color_black)
+	surface.DrawRect(x - accurateW + shadowPadding, y - accurateW + shadowPadding, width, width)
+
+	surface.DrawRect(x - accurateW + shadowPadding, y - height - padding + shadowPadding, width, height)
+	surface.DrawRect(x - accurateW + shadowPadding, y + padding + 1 + shadowPadding, width, height)
+
+	surface.DrawRect(x - height - padding + shadowPadding, y - accurateW + shadowPadding, height, width)
+	surface.DrawRect(x + padding + 1 + shadowPadding, y - accurateW + shadowPadding, height, width)
 
 	surface.SetDrawColor(self.CrosshairColor)
 	surface.DrawRect(x - accurateW, y - accurateW, width, width)
@@ -42,25 +58,20 @@ function BOREAL_ALYPH_HUD:DrawCrosshairGeneric(x, y, accuracy)
 
 	surface.DrawRect(x - height - padding, y - accurateW, height, width)
 	surface.DrawRect(x + padding + 1, y - accurateW, height, width)
-
-	self:ContinueFX()
 end
 
-local WEP, R, X, Y
+function BOREAL_ALYPH_HUD:DrawCrosshairShotgun(x, y, accuracy)
+	x = x:ceil()
+	y = y:ceil()
+	local width = ScreenSize(1):ceil()
+	local height = ScreenSize(6):ceil():max(6) * (0.7 + accuracy * 0.3):max(1)
+	local size = (accuracy * ScreenSize(32)):floor():max(60)
+	size = size - size % 7
+	local inLen = (size * 0.05):max(2)
+	local shadowPadding = ScreenSize(SHADOW_PADDING):max(2)
 
-local function closure()
-	R = WEP:DoDrawCrosshair(X, Y) == true
-end
-
-function BOREAL_ALYPH_HUD:HandleDoDrawCrosshair(x, y, weapon)
-	self:InterruptFX()
-
-	X, Y = x, y
-	WEP = weapon
-	R = false
-	ProtectedCall(closure)
-
-	self:ContinueFX()
-
-	return R
+	draw.NoTexture()
+	--HUDCommons.DrawArcHollow(x, y, radius, segments, inLen, arc1, color)
+	HUDCommons.DrawCircleHollow(x - size / 2 + shadowPadding, y - size / 2 + shadowPadding, size, size / 2, inLen, color_black)
+	HUDCommons.DrawCircleHollow(x - size / 2, y - size / 2, size, size / 2, inLen, self.CrosshairColor)
 end

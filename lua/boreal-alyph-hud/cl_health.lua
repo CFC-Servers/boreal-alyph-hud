@@ -94,4 +94,4 @@ function BOREAL_ALYPH_HUD:PaintArmor(x, y)
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetArmorFillage(), barHeight)
 end
 
-BOREAL_ALYPH_HUD:AddPaintHook('PaintHealth')
+BOREAL_ALYPH_HUD:AddFXPaintHook('PaintHealth')

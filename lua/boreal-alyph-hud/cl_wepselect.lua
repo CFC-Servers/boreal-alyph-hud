@@ -147,4 +147,4 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 	end
 end
 
-BOREAL_ALYPH_HUD:AddPaintHook('DrawWeaponSelector')
+BOREAL_ALYPH_HUD:AddFXPaintHook('DrawWeaponSelector')

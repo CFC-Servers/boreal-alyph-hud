@@ -148,4 +148,4 @@ end
 
 BOREAL_ALYPH_HUD:AddHook('DrawDeathNotice')
 BOREAL_ALYPH_HUD:AddHook('AddDeathNotice')
-BOREAL_ALYPH_HUD:AddPaintHook('RenderDeathNotice')
+BOREAL_ALYPH_HUD:AddFXPaintHook('RenderDeathNotice')
