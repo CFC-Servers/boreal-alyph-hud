@@ -90,6 +90,8 @@ BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M = BOREAL_ALYPH_HUD:CreateConVar('fx_distort
 
 BOREAL_ALYPH_HUD.FX_DEBUG = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_debug', '0', 'Draw pieces of distortion', true)
 
+BOREAL_ALYPH_HUD.ENABLE_FX_FOR_EVERYTHING = BOREAL_ALYPH_HUD:CreateConVar('fx_everything', '0', 'Enable FX over entire HUDPaint. THIS OPTION IS EXPERIMENTAL AND IT WONT WORK WITH OTHER ADDONS THAT USE RENDERTARGETS IN HUDPaint!', false)
+
 local SCREEN_POLIES = {}
 local SCREEN_POLIES1 = {}
 local SCREEN_POLIES2 = {}
@@ -231,12 +233,30 @@ local function closure()
 end
 
 local ProtectedCall = ProtectedCall
+local EverFinished = true
 
-function BOREAL_ALYPH_HUD:FXRenderProxy()
-	if not HUDRT or not self.ENABLE_FX:GetBool() then
-		self:PaintFXGroup()
-		return
+local function PopFX(self)
+	EverFinished = true
+
+	render.PopFilterMag()
+	render.PopFilterMin()
+
+	surface.DisableClipping(false)
+
+	cam.End2D()
+
+	render.OverrideAlphaWriteEnable(false)
+	render.OverrideColorWriteEnable(false)
+
+	render.PopRenderTarget()
+end
+
+local function PreDrawFX(self)
+	if not EverFinished then
+		PopFX(self)
 	end
+
+	EverFinished = false
 
 	render.PushRenderTarget(HUDRT)
 	render.OverrideColorWriteEnable(true, true)
@@ -263,9 +283,9 @@ function BOREAL_ALYPH_HUD:FXRenderProxy()
 		render.SetStencilTestMask(255)
 		render.SetStencilReferenceValue(1)
 	end
+end
 
-	ProtectedCall(closure)
-
+local function PostDrawFX(self)
 	if self.ENABLE_FX_SCANLINES:GetBool() then
 		render.SetStencilCompareFunction(STENCIL_EQUAL)
 		render.SetStencilFailOperation(STENCIL_KEEP)
@@ -284,17 +304,7 @@ function BOREAL_ALYPH_HUD:FXRenderProxy()
 		render.SetStencilEnable(false)
 	end
 
-	render.PopFilterMag()
-	render.PopFilterMin()
-
-	surface.DisableClipping(false)
-
-	cam.End2D()
-
-	render.OverrideAlphaWriteEnable(false)
-	render.OverrideColorWriteEnable(false)
-
-	render.PopRenderTarget()
+	PopFX(self)
 
 	surface.SetDrawColor(255, 255, 255)
 	HUDRTMat:SetFloat('$alpha', 0.7)
@@ -341,4 +351,28 @@ function BOREAL_ALYPH_HUD:FXRenderProxy()
 	end
 end
 
+function BOREAL_ALYPH_HUD:FXRenderProxy()
+	if not HUDRT or not self.ENABLE_FX:GetBool() or self.ENABLE_FX_FOR_EVERYTHING:GetBool() then
+		self:PaintFXGroup()
+		return
+	end
+
+	PreDrawFX(self)
+	ProtectedCall(closure)
+	PostDrawFX(self)
+end
+
 BOREAL_ALYPH_HUD:AddPaintHook('FXRenderProxy')
+
+function BOREAL_ALYPH_HUD:PreDrawHUDPaint()
+	if not HUDRT or not self.ENABLE_FX:GetBool() or not self.ENABLE_FX_FOR_EVERYTHING:GetBool() then return end
+	PreDrawFX(self)
+end
+
+function BOREAL_ALYPH_HUD:PostDrawHUDPaint()
+	if not HUDRT or not self.ENABLE_FX:GetBool() or not self.ENABLE_FX_FOR_EVERYTHING:GetBool() then return end
+	PostDrawFX(self)
+end
+
+BOREAL_ALYPH_HUD:AddHookCustom('HUDPaint', 'PreDrawHUDPaint', nil, -4)
+BOREAL_ALYPH_HUD:AddHookCustom('HUDPaint', 'PostDrawHUDPaint', nil, 4)
