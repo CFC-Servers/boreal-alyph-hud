@@ -46,6 +46,18 @@ BOREAL_ALYPH_HUD.ArmorCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCo
 	weight = 500
 })
 
+BOREAL_ALYPH_HUD.HEVPowerIcon = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerIcon', {
+	font = 'HalfLife2',
+	size = 50,
+	weight = 400
+})
+
+BOREAL_ALYPH_HUD.HEVPowerCounter = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerCounter', {
+	font = 'Alte DIN 1451 Mittelschrift',
+	size = 32,
+	weight = 400
+})
+
 BOREAL_ALYPH_HUD.AmmoCounterReady = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCounterReady', {
 	font = 'Alte DIN 1451 Mittelschrift',
 	size = 40,
@@ -94,6 +106,8 @@ BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width'
 BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 6
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
 BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14
+
+BOREAL_ALYPH_HUD:RegisterRegularVariable('powerFillage', 'LimitedHEVGetPowerFillage', false)
 
 BOREAL_ALYPH_HUD:DefinePaintGroup('FX', false)
 
