@@ -112,7 +112,7 @@ BOREAL_ALYPH_HUD:RegisterRegularVariable('powerFillage', 'LimitedHEVGetPowerFill
 BOREAL_ALYPH_HUD:DefinePaintGroup('FX', false)
 
 function BOREAL_ALYPH_HUD:HUDShouldDraw(str)
-	if str == 'CHudAmmo' or str == 'CHudBattery' or str == 'CHudHealth' or str == 'CHudSecondaryAmmo' then return false end
+	if (str == 'CHudAmmo' or str == 'CHudSecondaryAmmo') and self.ENABLE_AMMO_COUNTER:GetBool() or (str == 'CHudBattery' and self.ENABLE_ARMOR_COUNTER:GetBool()) or (str == 'CHudHealth' and self.ENABLE_HEALTH_COUNTER:GetBool()) then return false end
 end
 
 BOREAL_ALYPH_HUD:AddHook('HUDShouldDraw')
