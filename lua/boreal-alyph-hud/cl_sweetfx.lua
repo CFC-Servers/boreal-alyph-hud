@@ -81,7 +81,7 @@ BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R_FADEOUT = BOREAL_ALYPH_HUD:CreateConVar(
 
 BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT = BOREAL_ALYPH_HUD:CreateConVar('fx_distort', '1', 'Enable distort')
 
-BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_m', '1', 'Distort multiplicator', false, {
+BOREAL_ALYPH_HUD.ENABLE_FX_DISTORT_M = BOREAL_ALYPH_HUD:CreateConVar('fx_distort_m', '0.5', 'Distort multiplicator', false, {
 	type = BOREAL_ALYPH_HUD.CONVAR_TYPE_NUM,
 	max = 4,
 	min = -4,
