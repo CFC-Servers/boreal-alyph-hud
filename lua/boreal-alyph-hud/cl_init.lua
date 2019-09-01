@@ -94,12 +94,12 @@ BOREAL_ALYPH_HUD.KillfeedFont = BOREAL_ALYPH_HUD:CreateScalableFont('Killfeed', 
 	weight = 500
 })
 
-BOREAL_ALYPH_HUD.HealthColor = Color(255, 176, 0, 160)
-BOREAL_ALYPH_HUD.CriticalHealthColor = Color(185, 45, 45)
-BOREAL_ALYPH_HUD.ArmorColor = Color(255, 176, 0, 160)
-BOREAL_ALYPH_HUD.AmmoColor = Color(255, 176, 0, 160)
-BOREAL_ALYPH_HUD.KillfeedGenericColor = Color(255, 176, 0)
-BOREAL_ALYPH_HUD.CrosshairColor = Color(255, 176, 0)
+BOREAL_ALYPH_HUD.HealthColor = BOREAL_ALYPH_HUD:CreateColor2('health', 'BAHUD Health Color', 255, 176, 0, 160)
+BOREAL_ALYPH_HUD.CriticalHealthColor = BOREAL_ALYPH_HUD:CreateColor2('crit_health', 'BAHUD Critical Health Color', 185, 45, 45)
+BOREAL_ALYPH_HUD.ArmorColor = BOREAL_ALYPH_HUD:CreateColor2('armor', 'BAHUD Armor Color', 255, 176, 0, 160)
+BOREAL_ALYPH_HUD.AmmoColor = BOREAL_ALYPH_HUD:CreateColor2('ammo', 'BAHUD Ammo Color', 255, 176, 0, 160)
+BOREAL_ALYPH_HUD.KillfeedGenericColor = BOREAL_ALYPH_HUD:CreateColor2('killfeed', 'BAHUD Killfeed Generic', 255, 176, 0)
+BOREAL_ALYPH_HUD.CrosshairColor = BOREAL_ALYPH_HUD:CreateColor2('crosshair', 'BAHUD Crosshair Color', 255, 176, 0)
 
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
