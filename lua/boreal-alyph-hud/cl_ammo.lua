@@ -80,7 +80,7 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 		barWidth = barWidth:max(totalWidth)
 
 		surface.SetDrawColor(ammo2 > 0 and col or (col * 50):SetAlpha(self.AmmoColor.a))
-		surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
+		surface.DrawRect(x - barWidth, y + h1, barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
 
 		return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
 	end
@@ -106,9 +106,9 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 	barWidth = barWidth:max(totalWidth)
 
 	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
-	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
+	surface.DrawRect(x - barWidth, y + h1, barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
 	surface.SetDrawColor(col)
-	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth * self:GetAmmoFillage2(), ScreenSize(self.BAR_DEF_HEIGHT))
+	surface.DrawRect(x - barWidth, y + h1, barWidth * self:GetAmmoFillage2(), ScreenSize(self.BAR_DEF_HEIGHT))
 
 	return x - barWidth - ScreenSize(self.DEF_PADDING_ELEM), y
 end
