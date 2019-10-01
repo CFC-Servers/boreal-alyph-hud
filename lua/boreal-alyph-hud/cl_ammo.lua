@@ -151,10 +151,10 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	local text = DLib.i18n.localize('gui.bahud.generic.ammo')
 	local w3, h3 = surface.GetTextSize(text)
 
-	surface.SetTextPos(x - w2 - w1 - w3 * 2, y + ScreenSize(29) - h3)
+	surface.SetTextPos(x - w2 - w1 - w3 - ScreenSize(14), y + ScreenSize(29) - h3)
 	surface.DrawText(text)
 
-	totalWidth = totalWidth + w3 * 2
+	totalWidth = totalWidth + w3 + ScreenSize(14)
 	barWidth = barWidth:max(totalWidth)
 
 	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
