@@ -34,22 +34,40 @@ BOREAL_ALYPH_HUD.ArmorCounter = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounte
 	weight = 500
 })
 
-BOREAL_ALYPH_HUD.HealthCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('HealthCounterIcon', {
+BOREAL_ALYPH_HUD.HealthCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('HealthCounterIconRV1', {
 	font = 'HalfLife2',
-	size = 40,
+	size = 27,
 	weight = 500
 })
 
-BOREAL_ALYPH_HUD.ArmorCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterIcon', {
-	font = 'HalfLife2',
-	size = 40,
+BOREAL_ALYPH_HUD.HealthCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('HealthCounterText', {
+	font = 'Roboto Mono',
+	size = 15,
 	weight = 500
 })
 
-BOREAL_ALYPH_HUD.HEVPowerIcon = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerIcon', {
+BOREAL_ALYPH_HUD.ArmorCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterIconRV1', {
 	font = 'HalfLife2',
-	size = 50,
+	size = 15,
+	weight = 500
+})
+
+BOREAL_ALYPH_HUD.ArmorCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterText', {
+	font = 'Roboto Mono',
+	size = 25,
+	weight = 500
+})
+
+BOREAL_ALYPH_HUD.HEVPowerIcon = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerIconRV1', {
+	font = 'HalfLife2',
+	size = 37,
 	weight = 400
+})
+
+BOREAL_ALYPH_HUD.HEVCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('HEVCounterText', {
+	font = 'Roboto Mono',
+	size = 15,
+	weight = 500
 })
 
 BOREAL_ALYPH_HUD.HEVPowerCounter = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerCounter', {
@@ -67,6 +85,12 @@ BOREAL_ALYPH_HUD.AmmoCounterReady = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCou
 BOREAL_ALYPH_HUD.AmmoCounterStored = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCounterStored', {
 	font = 'Alte DIN 1451 Mittelschrift',
 	size = 28,
+	weight = 500
+})
+
+BOREAL_ALYPH_HUD.AmmoCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCounterText', {
+	font = 'Roboto Mono',
+	size = 15,
 	weight = 500
 })
 
@@ -103,7 +127,7 @@ BOREAL_ALYPH_HUD.CrosshairColor = BOREAL_ALYPH_HUD:CreateColor2('crosshair', 'BA
 
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
-BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 6
+BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 4
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
 BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14
 

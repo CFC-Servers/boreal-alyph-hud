@@ -146,10 +146,21 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 		surface.DrawText('/' .. ammo1)
 	end
 
+	surface.SetFont(self.HEVCounterText.REGULAR)
+
+	local text = DLib.i18n.localize('gui.bahud.generic.ammo')
+	local w3, h3 = surface.GetTextSize(text)
+
+	surface.SetTextPos(x - w2 - w1 - w3 * 2, y + ScreenSize(29) - h3)
+	surface.DrawText(text)
+
+	totalWidth = totalWidth + w3 * 2
+	barWidth = barWidth:max(totalWidth)
+
 	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
-	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
+	surface.DrawRect(x - barWidth, y + h1, barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
 	surface.SetDrawColor(col)
-	surface.DrawRect(x - barWidth, y + h1 + ScreenSize(self.DEF_PADDING), barWidth * self:GetAmmoFillage1(), ScreenSize(self.BAR_DEF_HEIGHT))
+	surface.DrawRect(x - barWidth, y + h1, barWidth * self:GetAmmoFillage1(), ScreenSize(self.BAR_DEF_HEIGHT))
 end
 
 BOREAL_ALYPH_HUD:AddFXPaintHook('PaintAmmo')

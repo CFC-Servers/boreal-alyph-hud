@@ -191,7 +191,7 @@ local function refreshRT()
 		local abberation = 0.0003 * 3 * fadeout * (x < w / 3 and (1 - x:progression(0, w / 3)) or x > w * 0.66 and x:progression(w * 0.66, w) * fadeout or (1 / (fadeout * 3))) * astrength
 
 		if not BOREAL_ALYPH_HUD.ENABLE_FX_ABBERATION_R:GetBool() then
-			abberation = 0.0003 * astrength
+			abberation = 0.00007 * astrength
 		end
 
 		table.insert(SCREEN_POLIES1, {
