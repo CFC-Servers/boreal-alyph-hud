@@ -54,7 +54,7 @@ BOREAL_ALYPH_HUD.ArmorCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCo
 
 BOREAL_ALYPH_HUD.ArmorCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterText', {
 	font = 'Roboto Mono',
-	size = 25,
+	size = 15,
 	weight = 500
 })
 
