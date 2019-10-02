@@ -48,7 +48,7 @@ BOREAL_ALYPH_HUD.HealthCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('Health
 
 BOREAL_ALYPH_HUD.ArmorCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterIconRV1', {
 	font = 'HalfLife2',
-	size = 15,
+	size = 27,
 	weight = 500
 })
 
