@@ -77,7 +77,19 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 
 		surface.DrawText(ammo2)
 
+		surface.SetFont(self.AmmoCounterText.REGULAR)
+
+		local text = DLib.i18n.localize('gui.bahud.generic.alt')
+		local w3, h3 = surface.GetTextSize(text)
+
+		totalWidth = totalWidth + w3 + ScreenSize(23)
 		barWidth = barWidth:max(totalWidth)
+
+		surface.SetTextPos(x - barWidth, y + ScreenSize(29) - h3)
+		surface.DrawText(text)
+
+		local isize = ScreenSize(self.AMMO_ICON_SIZE)
+		self:GetWeapon():DrawSecondaryAmmoIcon(x - barWidth, y + ScreenSize(4), isize, isize * 3, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 
 		surface.SetDrawColor(ammo2 > 0 and col or (col * 50):SetAlpha(self.AmmoColor.a))
 		surface.DrawRect(x - barWidth, y + h1, barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
@@ -103,7 +115,19 @@ function BOREAL_ALYPH_HUD:DrawSecondaryAmmo(x, y)
 	surface.SetTextPos(x - totalWidth, y)
 	surface.DrawText(clip2)
 
+	surface.SetFont(self.AmmoCounterText.REGULAR)
+
+	local text = DLib.i18n.localize('gui.bahud.generic.alt')
+	local w3, h3 = surface.GetTextSize(text)
+
+	totalWidth = totalWidth + w3 + ScreenSize(20)
 	barWidth = barWidth:max(totalWidth)
+
+	surface.SetTextPos(x - barWidth, y + ScreenSize(29) - h3)
+	surface.DrawText(text)
+
+	local isize = ScreenSize(self.AMMO_ICON_SIZE)
+	self:GetWeapon():DrawSecondaryAmmoIcon(x - barWidth, y + ScreenSize(4), isize, isize * 3, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 
 	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
 	surface.DrawRect(x - barWidth, y + h1, barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
