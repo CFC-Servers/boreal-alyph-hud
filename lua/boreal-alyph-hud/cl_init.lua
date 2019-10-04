@@ -127,6 +127,7 @@ BOREAL_ALYPH_HUD.CrosshairColor = BOREAL_ALYPH_HUD:CreateColor2('crosshair', 'BA
 
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
+BOREAL_ALYPH_HUD.AMMO_ICON_SIZE = 12
 BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 4
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
 BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14

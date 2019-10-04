@@ -155,6 +155,10 @@ function BOREAL_ALYPH_HUD:DrawPrimaryAmmo(x, y)
 	surface.SetTextPos(x - barWidth, y + ScreenSize(29) - h3)
 	surface.DrawText(text)
 
+	local isize = ScreenSize(self.AMMO_ICON_SIZE)
+
+	self:GetWeapon():DrawPrimaryAmmoIcon(x - barWidth, y + ScreenSize(2), isize, isize * 3, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
 	surface.SetDrawColor((col * 50):SetAlpha(self.AmmoColor.a))
 	surface.DrawRect(x - barWidth, y + h1, barWidth, ScreenSize(self.BAR_DEF_HEIGHT))
 	surface.SetDrawColor(col)
