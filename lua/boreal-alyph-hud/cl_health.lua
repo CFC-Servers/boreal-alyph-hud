@@ -34,8 +34,70 @@ BOREAL_ALYPH_HUD.ENABLE_HEV_SUPPORT = BOREAL_ALYPH_HUD:CreateConVar('hev', '1', 
 function BOREAL_ALYPH_HUD:PaintHealth()
 	if not self:GetVarAlive() or not self:GetVarWearingSuit() then return end
 
-	local x, y = POS_HEALTH()
+	if self.HUD_REV:GetBool() then
+		self:PaintHealthRev1(POS_HEALTH())
+	else
+		self:PaintHealthRev0(POS_HEALTH())
+	end
+end
 
+function BOREAL_ALYPH_HUD:PaintHealthRev0(x, y)
+	if self.ENABLE_HEALTH_COUNTER:GetBool() then
+		surface.SetFont(self.HealthCounterIconREV0.REGULAR)
+		local w, h = surface.GetTextSize('+')
+		surface.SetFont(self.HealthCounter.REGULAR)
+
+		local padding = ScreenSize(self.DEF_PADDING)
+		local barHeight = ScreenSize(self.BAR_DEF_HEIGHT)
+		local barWidth = ScreenSize(self.BAR_DEF_WIDTH:GetFloat()):max(surface.GetTextSize(self:GetVarHealth()) + padding * 2 + ScreenSize(10))
+
+		surface.SetFont(self.HealthCounterIconREV0.REGULAR)
+		local col = self:GetHealthFillage() > 0.3 and self.HealthColor or self.CriticalHealthColor
+		local acol = col
+		col = col:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or col.a)
+		surface.SetTextColor(col)
+
+		surface.SetTextPos(x, y)
+		surface.DrawText('+')
+
+		surface.SetFont(self.HealthCounter.REGULAR)
+
+		surface.SetTextPos(x + padding + w, y + ScreenSize(2))
+		surface.DrawText(self:GetVarHealth())
+
+		surface.SetDrawColor((col * 50):SetAlpha(acol.a))
+		surface.DrawRect(x, y + h + padding, barWidth, barHeight)
+
+		surface.SetDrawColor(col)
+		surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
+
+		if self.ENABLE_HEV_SUPPORT:GetBool() and self:GetVarPowerFillage() then
+			surface.SetFont(self.HEVPowerCounter.REGULAR)
+			local w, h = surface.GetTextSize('W')
+			self:PaintLimitedHEVRev0(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
+		end
+
+		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
+			self:PaintArmorRev0(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
+		end
+	elseif self.ENABLE_ARMOR_COUNTER:GetBool() then
+		if self.ENABLE_HEV_SUPPORT:GetBool() and self:GetVarPowerFillage() then
+			surface.SetFont(self.HEVPowerCounter.REGULAR)
+			local w, h = surface.GetTextSize('W')
+			self:PaintLimitedHEVRev0(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
+		end
+
+		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
+			self:PaintArmorRev0(x, y)
+		end
+	elseif self.ENABLE_HEV_SUPPORT:GetBool() and self:GetVarPowerFillage() then
+		surface.SetFont(self.HEVPowerCounter.REGULAR)
+		local w, h = surface.GetTextSize('W')
+		self:PaintLimitedHEVRev0(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
+	end
+end
+
+function BOREAL_ALYPH_HUD:PaintHealthRev1(x, y)
 	if self.ENABLE_HEALTH_COUNTER:GetBool() then
 		surface.SetFont(self.HealthCounterIcon.REGULAR)
 		local w, h = surface.GetTextSize('+')
@@ -79,30 +141,30 @@ function BOREAL_ALYPH_HUD:PaintHealth()
 		if self.ENABLE_HEV_SUPPORT:GetBool() and self:GetVarPowerFillage() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
-			self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
+			self:PaintLimitedHEVRev1(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
 		end
 
 		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
-			self:PaintArmor(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
+			self:PaintArmorRev1(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
 		end
 	elseif self.ENABLE_ARMOR_COUNTER:GetBool() then
 		if self.ENABLE_HEV_SUPPORT:GetBool() and self:GetVarPowerFillage() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
-			self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
+			self:PaintLimitedHEVRev1(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
 		end
 
 		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
-			self:PaintArmor(x, y)
+			self:PaintArmorRev1(x, y)
 		end
 	elseif self.ENABLE_HEV_SUPPORT:GetBool() and self:GetVarPowerFillage() then
 		surface.SetFont(self.HEVPowerCounter.REGULAR)
 		local w, h = surface.GetTextSize('W')
-		self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
+		self:PaintLimitedHEVRev1(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h)
 	end
 end
 
-function BOREAL_ALYPH_HUD:PaintArmor(x, y)
+function BOREAL_ALYPH_HUD:PaintArmorRev1(x, y)
 	if not x or not y then
 		x, y = POS_HEALTH()
 	end
@@ -146,7 +208,7 @@ function BOREAL_ALYPH_HUD:PaintArmor(x, y)
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetArmorFillage(), barHeight)
 end
 
-function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y)
+function BOREAL_ALYPH_HUD:PaintLimitedHEVRev1(x, y)
 	if not x or not y then
 		x, y = POS_HEALTH()
 	end
@@ -178,6 +240,66 @@ function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y)
 
 	surface.SetTextPos(x + padding + w + w2 + ScreenSize(5), y + ScreenSize(2))
 	surface.DrawText((self:GetVarPowerFillage() * 100):floor())
+end
+
+function BOREAL_ALYPH_HUD:PaintArmorRev0(x, y)
+	if not x or not y then
+		x, y = POS_HEALTH()
+	end
+
+	surface.SetFont(self.ArmorCounterIconREV0.REGULAR)
+	local w, h = surface.GetTextSize('*')
+	surface.SetFont(self.ArmorCounter.REGULAR)
+
+	local padding = ScreenSize(self.DEF_PADDING)
+	local barHeight = ScreenSize(self.BAR_DEF_HEIGHT)
+	local barWidth = ScreenSize(self.BAR_DEF_WIDTH:GetFloat()):max(surface.GetTextSize(self:GetVarArmor()) + padding * 2)
+
+	local col = self.ArmorColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.ArmorColor.a)
+
+	surface.SetFont(self.ArmorCounterIconREV0.REGULAR)
+	surface.SetTextColor(col)
+
+	surface.SetTextPos(x, y)
+	surface.DrawText('*')
+
+	surface.SetFont(self.ArmorCounter.REGULAR)
+
+	surface.SetTextPos(x + padding + w, y + ScreenSize(2))
+	surface.DrawText(self:GetVarArmor())
+
+	surface.SetDrawColor((col * 50):SetAlpha(self.ArmorColor.a))
+	surface.DrawRect(x, y + h + padding, barWidth, barHeight)
+
+	surface.SetDrawColor(col)
+	surface.DrawRect(x, y + h + padding, barWidth * self:GetArmorFillage(), barHeight)
+end
+
+function BOREAL_ALYPH_HUD:PaintLimitedHEVRev0(x, y)
+	if not x or not y then
+		x, y = POS_HEALTH()
+	end
+
+	surface.SetFont(self.HEVPowerCounter.REGULAR)
+	local text = (self:GetVarPowerFillage() * 100):floor()
+
+	local padding = ScreenSize(self.DEF_PADDING)
+	surface.SetFont(self.HEVPowerIconREV0.REGULAR)
+	local w, h = surface.GetTextSize('D')
+
+	local col = self.ArmorColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.ArmorColor.a)
+
+	surface.SetTextColor(col)
+
+	surface.SetTextPos(x, y - h * 0.25)
+	surface.DrawText('D')
+
+	h = h * 0.7
+
+	surface.SetFont(self.HEVPowerCounter.REGULAR)
+
+	surface.SetTextPos(x + padding + w, y + ScreenSize(2))
+	surface.DrawText(text)
 end
 
 BOREAL_ALYPH_HUD:AddFXPaintHook('PaintHealth')

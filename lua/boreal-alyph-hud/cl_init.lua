@@ -40,6 +40,12 @@ BOREAL_ALYPH_HUD.HealthCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('Health
 	weight = 500
 })
 
+BOREAL_ALYPH_HUD.HealthCounterIconREV0 = BOREAL_ALYPH_HUD:CreateScalableFont('HealthCounterIconRV0', {
+	font = 'HalfLife2',
+	size = 40,
+	weight = 500
+})
+
 BOREAL_ALYPH_HUD.HealthCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('HealthCounterText', {
 	font = 'Roboto Mono',
 	size = 15,
@@ -52,6 +58,12 @@ BOREAL_ALYPH_HUD.ArmorCounterIcon = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCo
 	weight = 500
 })
 
+BOREAL_ALYPH_HUD.ArmorCounterIconREV0 = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterIconRV0', {
+	font = 'HalfLife2',
+	size = 40,
+	weight = 500
+})
+
 BOREAL_ALYPH_HUD.ArmorCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterText', {
 	font = 'Roboto Mono',
 	size = 15,
@@ -61,6 +73,12 @@ BOREAL_ALYPH_HUD.ArmorCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCo
 BOREAL_ALYPH_HUD.HEVPowerIcon = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerIconRV1', {
 	font = 'HalfLife2',
 	size = 37,
+	weight = 400
+})
+
+BOREAL_ALYPH_HUD.HEVPowerIconREV0 = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowerIconRV0', {
+	font = 'HalfLife2',
+	size = 50,
 	weight = 400
 })
 
@@ -127,6 +145,7 @@ BOREAL_ALYPH_HUD.CrosshairColor = BOREAL_ALYPH_HUD:CreateColor2('crosshair', 'BA
 
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
+BOREAL_ALYPH_HUD.HUD_REV = BOREAL_ALYPH_HUD:CreateConVar('rev', '1', 'HUD Revision. 0 for old, 1 for new', false)
 BOREAL_ALYPH_HUD.AMMO_ICON_SIZE = 12
 BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 4
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
