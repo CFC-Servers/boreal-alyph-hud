@@ -146,12 +146,11 @@ BOREAL_ALYPH_HUD.CrosshairColor = BOREAL_ALYPH_HUD:CreateColor2('crosshair', 'BA
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
 BOREAL_ALYPH_HUD.HUD_REV = BOREAL_ALYPH_HUD:CreateConVar('rev', '1', 'HUD Revision. 0 for old, 1 for new', false)
+BOREAL_ALYPH_HUD.ALWAYS_DRAW_HEV_POWER = BOREAL_ALYPH_HUD:CreateConVar('always_draw_hev', '1', 'Always draw HEV power icon', false)
 BOREAL_ALYPH_HUD.AMMO_ICON_SIZE = 12
 BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 4
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
 BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14
-
-BOREAL_ALYPH_HUD:RegisterRegularVariable('powerFillage', 'LimitedHEVGetPowerFillage', false)
 
 BOREAL_ALYPH_HUD:DefinePaintGroup('FX', false)
 
