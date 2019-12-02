@@ -48,6 +48,7 @@ BOREAL_ALYPH_HUD.HealthCounterIconREV0 = BOREAL_ALYPH_HUD:CreateScalableFont('He
 
 BOREAL_ALYPH_HUD.HealthCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('HealthCounterText', {
 	font = 'Roboto Mono',
+	extended = true,
 	size = 15,
 	weight = 500
 })
@@ -66,6 +67,7 @@ BOREAL_ALYPH_HUD.ArmorCounterIconREV0 = BOREAL_ALYPH_HUD:CreateScalableFont('Arm
 
 BOREAL_ALYPH_HUD.ArmorCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('ArmorCounterText', {
 	font = 'Roboto Mono',
+	extended = true,
 	size = 15,
 	weight = 500
 })
@@ -84,6 +86,7 @@ BOREAL_ALYPH_HUD.HEVPowerIconREV0 = BOREAL_ALYPH_HUD:CreateScalableFont('HEVPowe
 
 BOREAL_ALYPH_HUD.HEVCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('HEVCounterText', {
 	font = 'Roboto Mono',
+	extended = true,
 	size = 15,
 	weight = 500
 })
@@ -108,6 +111,7 @@ BOREAL_ALYPH_HUD.AmmoCounterStored = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCo
 
 BOREAL_ALYPH_HUD.AmmoCounterText = BOREAL_ALYPH_HUD:CreateScalableFont('AmmoCounterText', {
 	font = 'Roboto Mono',
+	extended = true,
 	size = 15,
 	weight = 500
 })
@@ -121,12 +125,14 @@ BOREAL_ALYPH_HUD.SelectorSmallNumbers = BOREAL_ALYPH_HUD:CreateScalableFont('Sel
 BOREAL_ALYPH_HUD.SelectorWeaponName = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorWeaponName', {
 	font = 'Alte DIN 1451 Mittelschrift',
 	size = 14,
+	extended = true,
 	weight = 500
 })
 
 BOREAL_ALYPH_HUD.SelectorNames = BOREAL_ALYPH_HUD:CreateScalableFont('SelectorNames', {
 	font = 'Alte DIN 1451 Mittelschrift',
 	size = 18,
+	extended = true,
 	weight = 500
 })
 
