@@ -149,6 +149,9 @@ BOREAL_ALYPH_HUD.AmmoColor = BOREAL_ALYPH_HUD:CreateColor2('ammo', 'BAHUD Ammo C
 BOREAL_ALYPH_HUD.KillfeedGenericColor = BOREAL_ALYPH_HUD:CreateColor2('killfeed', 'BAHUD Killfeed Generic', 255, 176, 0)
 BOREAL_ALYPH_HUD.CrosshairColor = BOREAL_ALYPH_HUD:CreateColor2('crosshair', 'BAHUD Crosshair Color', 255, 176, 0)
 
+BOREAL_ALYPH_HUD.SelectorColorActive = BOREAL_ALYPH_HUD:CreateColor2('wepselect', 'BAHUD Weapon Selector Active', 255, 176, 0, 160)
+BOREAL_ALYPH_HUD.SelectorColorInactive = BOREAL_ALYPH_HUD:CreateColor2('wepselectin', 'BAHUD Weapon Selector Inactive', 160, 110, 0, 40)
+
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
 BOREAL_ALYPH_HUD.HUD_REV = BOREAL_ALYPH_HUD:CreateConVar('rev', '1', 'HUD Revision. 0 for old, 1 for new', false)

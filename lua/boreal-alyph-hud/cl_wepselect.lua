@@ -24,9 +24,6 @@ local ScreenSize = ScreenSize
 local draw = draw
 local TEXT_ALIGN_CENTER = TEXT_ALIGN_CENTER
 
-BOREAL_ALYPH_HUD.SelectorColorActive = Color(255, 176, 0, 160)
-BOREAL_ALYPH_HUD.SelectorColorInactive = Color(255, 176, 0, 40) * 160
-
 BOREAL_ALYPH_HUD:InitializeWeaponSelector(true)
 
 BOREAL_ALYPH_HUD.SELECTOR_SQUARE_SPACE = 9
