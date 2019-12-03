@@ -70,7 +70,8 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 
 	local scrollStart, scrollEnd = 1, #self.WeaponListInSlot
 
-	local active = self.SelectorColorActive:ModifyAlpha(self.ENABLE_FX:GetBool() and alpha or (self.SelectorColorActive.a / 255) * alpha)
+	local active = self.SelectorColorActive:ModifyAlpha(self.ENABLE_FX:GetBool() and alpha or (self.SelectorColorActive.a / 255) * alpha) * 200
+	local active2 = active * 200
 	local inactive = self.SelectorColorInactive:ModifyAlpha((self.SelectorColorInactive.a / 255) * alpha)
 
 	if #self.WeaponListInSlot > 6 then
@@ -89,10 +90,10 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelector()
 				local weapon = self.WeaponListInSlot[i2]
 
 				if self:GetActiveWeaponPos() == i2 then
-					surface.SetDrawColor(active)
+					surface.SetDrawColor(active2)
 					surface.DrawRect(x, y, aSquareW, aSquareH)
 
-					weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 2, aSquareH - inpadding * 2, alpha)
+					weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 2, aSquareH - inpadding * 2, active)
 
 					surface.SetFont(self.SelectorSmallNumbers.REGULAR)
 					local text = getPrintName(weapon)
