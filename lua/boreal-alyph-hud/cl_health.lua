@@ -214,7 +214,14 @@ BOREAL_ALYPH_HUD.LAST_NONFULL_SUIT = 0
 BOREAL_ALYPH_HUD.LAST_NONFULL_SUIT_FADE = 0
 BOREAL_ALYPH_HUD.LAST_NONFULL_SUIT_STATUS = false
 
+BOREAL_ALYPH_HUD.LAST_SUIT_ALT_LABEL = 0
+BOREAL_ALYPH_HUD.LAST_SUIT_ALT_LABEL_LAST = ''
+BOREAL_ALYPH_HUD.LAST_SUIT_ALT_LABEL_LAST_DEC = 0
+BOREAL_ALYPH_HUD.LAST_SUIT_ALT_LABEL_LAST_DECT = 100
+
 local RealTime = RealTimeL
+local LerpCubic = LerpCubic
+local RealFrameTime = RealFrameTime
 
 function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y, revision)
 	if not x or not y then
@@ -224,8 +231,14 @@ function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y, revision)
 	local suit = self:GetVarSuitPower():floor()
 	if suit < 0 then return end
 	local alpha = 1
+	local alt = self.ALTERNATIVE_AUX:GetBool()
+	local hide = not self.ALWAYS_DRAW_HEV_POWER:GetBool()
 
-	if not self.ALWAYS_DRAW_HEV_POWER:GetBool() then
+	if alt then
+		hide = self.ALTERNATIVE_AUX_HIDE:GetBool()
+	end
+
+	if hide then
 		if suit >= 100 then
 			if self.LAST_FULL_SUIT_FADE < RealTime() and not self.LAST_NONFULL_SUIT_STATUS then return end
 
@@ -250,7 +263,54 @@ function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y, revision)
 	local padding = ScreenSize(self.DEF_PADDING)
 	local col = self.ArmorColor:ModifyAlpha((self.ENABLE_FX:GetBool() and 255 or self.ArmorColor.a) * alpha)
 
-	if revision then
+	if alt then
+		local AUX_BAR_WIDTH = ScreenSize(self.AUX_BAR_WIDTH)
+		local AUX_BAR_PADDING = ScreenSize(self.AUX_BAR_PADDING)
+		local AUX_BAR_HEIGHT = ScreenSize(self.AUX_BAR_HEIGHT)
+		local h = ScreenSize(14)
+
+		local colI = col * 140
+		local step = 100 / self.AUX_BARS
+		local w = 0
+		local text = suit:clamp(0, 100) .. '%'
+		local text2 = suit >= 100 and '' or self:GetVarWaterLevel() < 3 and DLib.i18n.localize('gui.bahud.generic.sprint') or 'O2'
+
+		if self.LAST_SUIT_ALT_LABEL_LAST_DECT > suit then
+			self.LAST_SUIT_ALT_LABEL_LAST_DEC = RealTime() + 1
+		elseif self.LAST_SUIT_ALT_LABEL_LAST_DEC < RealTime() then
+			text2 = ''
+		end
+
+		self.LAST_SUIT_ALT_LABEL_LAST_DECT = suit
+
+		if text2 == '' then
+			self.LAST_SUIT_ALT_LABEL = LerpCubic(RealFrameTime() * 22, self.LAST_SUIT_ALT_LABEL, 0)
+		else
+			self.LAST_SUIT_ALT_LABEL_LAST = text2
+			self.LAST_SUIT_ALT_LABEL = LerpCubic(RealFrameTime() * 22, self.LAST_SUIT_ALT_LABEL, 1)
+		end
+
+		surface.SetTextColor(col:ModifyAlpha(col.a * self.LAST_SUIT_ALT_LABEL))
+
+		surface.SetFont(self.HEVCounterText.REGULAR)
+
+		surface.SetTextPos(x - ScreenSize(1), y - AUX_BAR_HEIGHT)
+		surface.DrawText(self.LAST_SUIT_ALT_LABEL_LAST)
+
+		for i = 1, self.AUX_BARS do
+			surface.SetDrawColor((suit >= i * step) and col or colI)
+			surface.DrawRect(x + w, y + h, AUX_BAR_WIDTH, AUX_BAR_HEIGHT)
+			w = w + AUX_BAR_WIDTH + AUX_BAR_PADDING
+		end
+
+		surface.SetTextColor(col)
+		surface.SetFont(self.HEVPowerCounter.REGULAR)
+
+		local w2, h2 = surface.GetTextSize(text)
+
+		surface.SetTextPos(x + w - w2 - AUX_BAR_PADDING, y - h2 - AUX_BAR_HEIGHT + ScreenSize(16))
+		surface.DrawText(text)
+	elseif revision then
 		surface.SetFont(self.HEVPowerIcon.REGULAR)
 		local w, h = surface.GetTextSize('D')
 

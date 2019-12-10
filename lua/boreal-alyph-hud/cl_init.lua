@@ -155,13 +155,22 @@ BOREAL_ALYPH_HUD.SelectorColorInactive = BOREAL_ALYPH_HUD:CreateColor2('wepselec
 BOREAL_ALYPH_HUD.BAR_DEF_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_line_width', '65', 'Default line width on HUD', true)
 BOREAL_ALYPH_HUD.BAR_AMMO_WIDTH = BOREAL_ALYPH_HUD:CreateConVar('def_ammo_width', '90', 'Default line width of ammo HUD', true)
 BOREAL_ALYPH_HUD.HUD_REV = BOREAL_ALYPH_HUD:CreateConVar('rev', '1', 'HUD Revision. 0 for old, 1 for new', false)
+BOREAL_ALYPH_HUD.ALTERNATIVE_AUX = BOREAL_ALYPH_HUD:CreateConVar('alt_aux', '1', 'Alternative AUX counter (more recent)', false)
 BOREAL_ALYPH_HUD.ALWAYS_DRAW_HEV_POWER = BOREAL_ALYPH_HUD:CreateConVar('always_draw_hev', '1', 'Always draw HEV power icon', false)
+BOREAL_ALYPH_HUD.ALTERNATIVE_AUX_HIDE = BOREAL_ALYPH_HUD:CreateConVar('alt_aux_hide', '1', 'Hide alt aux when it is full (overrides always_draw_hev)', false)
 BOREAL_ALYPH_HUD.AMMO_ICON_SIZE = 12
 BOREAL_ALYPH_HUD.BAR_DEF_HEIGHT = 4
 BOREAL_ALYPH_HUD.DEF_PADDING = 4
 BOREAL_ALYPH_HUD.DEF_PADDING_ELEM = 14
 
+BOREAL_ALYPH_HUD.AUX_BARS = 10
+BOREAL_ALYPH_HUD.AUX_BAR_WIDTH = 7.7
+BOREAL_ALYPH_HUD.AUX_BAR_HEIGHT = 4
+BOREAL_ALYPH_HUD.AUX_BAR_PADDING = 2
+
 BOREAL_ALYPH_HUD:DefinePaintGroup('FX', false)
+
+BOREAL_ALYPH_HUD:RegisterRegularVariable('waterLevel', 'WaterLevel', 0)
 
 function BOREAL_ALYPH_HUD:HUDShouldDraw(str)
 	if (str == 'CHudAmmo' or str == 'CHudSecondaryAmmo') and self.ENABLE_AMMO_COUNTER:GetBool() or (str == 'CHudBattery' and self.ENABLE_ARMOR_COUNTER:GetBool()) or (str == 'CHudHealth' and self.ENABLE_HEALTH_COUNTER:GetBool()) then return false end
