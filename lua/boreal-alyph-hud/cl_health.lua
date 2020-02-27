@@ -31,17 +31,17 @@ BOREAL_ALYPH_HUD.ENABLE_HEALTH_COUNTER = BOREAL_ALYPH_HUD:CreateConVar('health',
 BOREAL_ALYPH_HUD.ENABLE_ARMOR_COUNTER = BOREAL_ALYPH_HUD:CreateConVar('armor', '1', 'Enable armor counter')
 BOREAL_ALYPH_HUD.ENABLE_HEV_SUPPORT = BOREAL_ALYPH_HUD:CreateConVar('hev', '1', 'Enable HEV power counter')
 
-function BOREAL_ALYPH_HUD:PaintHealth()
+function BOREAL_ALYPH_HUD:PaintHealth(ply)
 	if not self:GetVarAlive() or not self:GetVarWearingSuit() then return end
 
 	if self.HUD_REV:GetBool() then
-		self:PaintHealthRev1(POS_HEALTH())
+		self:PaintHealthRev1(ply, POS_HEALTH())
 	else
-		self:PaintHealthRev0(POS_HEALTH())
+		self:PaintHealthRev0(ply, POS_HEALTH())
 	end
 end
 
-function BOREAL_ALYPH_HUD:PaintHealthRev0(x, y)
+function BOREAL_ALYPH_HUD:PaintHealthRev0(ply, x, y)
 	if self.ENABLE_HEALTH_COUNTER:GetBool() then
 		surface.SetFont(self.HealthCounterIconREV0.REGULAR)
 		local w, h = surface.GetTextSize('+')
@@ -74,7 +74,7 @@ function BOREAL_ALYPH_HUD:PaintHealthRev0(x, y)
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
-			self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
+			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
 		end
 
 		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
@@ -84,7 +84,7 @@ function BOREAL_ALYPH_HUD:PaintHealthRev0(x, y)
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
-			self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
+			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
 		end
 
 		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
@@ -93,11 +93,11 @@ function BOREAL_ALYPH_HUD:PaintHealthRev0(x, y)
 	elseif self.ENABLE_HEV_SUPPORT:GetBool() then
 		surface.SetFont(self.HEVPowerCounter.REGULAR)
 		local w, h = surface.GetTextSize('W')
-		self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
+		self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
 	end
 end
 
-function BOREAL_ALYPH_HUD:PaintHealthRev1(x, y)
+function BOREAL_ALYPH_HUD:PaintHealthRev1(ply, x, y)
 	if self.ENABLE_HEALTH_COUNTER:GetBool() then
 		surface.SetFont(self.HealthCounterIcon.REGULAR)
 		local w, h = surface.GetTextSize('+')
@@ -141,7 +141,7 @@ function BOREAL_ALYPH_HUD:PaintHealthRev1(x, y)
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
-			self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
+			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
 		end
 
 		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
@@ -151,7 +151,7 @@ function BOREAL_ALYPH_HUD:PaintHealthRev1(x, y)
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
-			self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
+			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
 		end
 
 		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
@@ -160,7 +160,7 @@ function BOREAL_ALYPH_HUD:PaintHealthRev1(x, y)
 	elseif self.ENABLE_HEV_SUPPORT:GetBool() then
 		surface.SetFont(self.HEVPowerCounter.REGULAR)
 		local w, h = surface.GetTextSize('W')
-		self:PaintLimitedHEV(x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
+		self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
 	end
 end
 
@@ -223,7 +223,7 @@ local RealTime = RealTimeL
 local LerpCubic = LerpCubic
 local RealFrameTime = RealFrameTime
 
-function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y, revision)
+function BOREAL_ALYPH_HUD:PaintLimitedHEV(ply, x, y, revision)
 	if not x or not y then
 		x, y = POS_HEALTH()
 	end
@@ -273,7 +273,7 @@ function BOREAL_ALYPH_HUD:PaintLimitedHEV(x, y, revision)
 		local step = 100 / self.AUX_BARS
 		local w = 0
 		local text = suit:clamp(0, 100) .. '%'
-		local text2 = suit >= 100 and '' or self:GetVarWaterLevel() < 3 and DLib.i18n.localize('gui.bahud.generic.sprint') or 'O2'
+		local text2 = suit >= 100 and '' or self:GetVarWaterLevel() < 3 and (ply:KeyDown(IN_SPEED) and DLib.i18n.localize('gui.bahud.generic.sprint') or '') or 'O2'
 
 		if self.LAST_SUIT_ALT_LABEL_LAST_DECT > suit then
 			self.LAST_SUIT_ALT_LABEL_LAST_DEC = RealTime() + 1
