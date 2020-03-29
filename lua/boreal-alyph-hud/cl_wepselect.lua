@@ -126,9 +126,9 @@ function BOREAL_ALYPH_HUD:DrawWeaponSelectorRev1(ply)
 					end
 				end
 
-				local textcol = isactive and (isempty and active or (inactive * 140):SetAlpha(alpha)) or isempty and empty or active
+				local textcol = isactive and (isempty and active or active3) or isempty and empty or active
 
-				surface.SetDrawColor(isactive and (isempty and empty3 or active * 220) or (isempty and empty4 or inactive))
+				surface.SetDrawColor(isactive and (isempty and empty3 or (active * 220):SetAlpha(alpha * .5)) or (isempty and empty4 or inactive))
 				surface.DrawRect(x, y, aSquareW, aSquareH)
 
 				weapon:DLibDrawWeaponSelection(x + inpadding, y + inpadding, aSquareW - inpadding * 2, aSquareH - inpadding * 2,
