@@ -125,6 +125,7 @@ local function refreshRT()
 	local textureFlags = 0
 	--textureFlags = textureFlags + 16 -- anisotropic
 	textureFlags = textureFlags + 256 -- no mipmaps
+	textureFlags = textureFlags + 512 -- no lod
 	textureFlags = textureFlags + 2048 -- Texture is procedural
 	textureFlags = textureFlags + 32768 -- Texture is a render target
 	-- textureFlags = textureFlags + 67108864 -- Usable as a vertex texture
