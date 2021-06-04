@@ -71,29 +71,35 @@ function BOREAL_ALYPH_HUD:PaintHealthRev0(ply, x, y)
 		surface.SetDrawColor(col)
 		surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
 
+		local barWidthArmor = 0
+
+		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
+			barWidthArmor = self:PaintArmorRev0(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y) + ScreenSize(self.DEF_PADDING_ELEM)
+		end
+
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
 			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
-		end
-
-		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
-			self:PaintArmorRev0(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
+			self:PaintLimitedFlashlight(ply, x + barWidth + ScreenSize(self.DEF_PADDING_ELEM) + barWidthArmor, y)
 		end
 	elseif self.ENABLE_ARMOR_COUNTER:GetBool() then
+		local barWidthArmor = 0
+		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
+			barWidthArmor = self:PaintArmorRev0(x, y) + ScreenSize(self.DEF_PADDING_ELEM)
+		end
+
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
 			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
-		end
-
-		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
-			self:PaintArmorRev0(x, y)
+			self:PaintLimitedFlashlight(ply, x + barWidthArmor, y)
 		end
 	elseif self.ENABLE_HEV_SUPPORT:GetBool() then
 		surface.SetFont(self.HEVPowerCounter.REGULAR)
 		local w, h = surface.GetTextSize('W')
 		self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, false)
+		self:PaintLimitedFlashlight(ply, x, y)
 	end
 end
 
@@ -138,29 +144,36 @@ function BOREAL_ALYPH_HUD:PaintHealthRev1(ply, x, y)
 		surface.SetDrawColor(col)
 		surface.DrawRect(x, y + h + padding, barWidth * self:GetHealthFillage(), barHeight)
 
+		local barWidthArmor = 0
+
+		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
+			barWidthArmor = self:PaintArmorRev1(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y) + ScreenSize(self.DEF_PADDING_ELEM)
+		end
+
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
 			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
-		end
-
-		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
-			self:PaintArmorRev1(x + barWidth + ScreenSize(self.DEF_PADDING_ELEM), y)
+			self:PaintLimitedFlashlight(ply, x + barWidth + ScreenSize(self.DEF_PADDING_ELEM) + barWidthArmor, y, true)
 		end
 	elseif self.ENABLE_ARMOR_COUNTER:GetBool() then
+		local barWidthArmor = 0
+
+		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
+			barWidthArmor = self:PaintArmorRev1(x, y) + ScreenSize(self.DEF_PADDING_ELEM)
+		end
+
 		if self.ENABLE_HEV_SUPPORT:GetBool() then
 			surface.SetFont(self.HEVPowerCounter.REGULAR)
 			local w, h = surface.GetTextSize('W')
 			self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
-		end
-
-		if self.ENABLE_ARMOR_COUNTER:GetBool() and self:GetVarArmor() > 0 then
-			self:PaintArmorRev1(x, y)
+			self:PaintLimitedFlashlight(ply, x + barWidthArmor, y, true)
 		end
 	elseif self.ENABLE_HEV_SUPPORT:GetBool() then
 		surface.SetFont(self.HEVPowerCounter.REGULAR)
 		local w, h = surface.GetTextSize('W')
 		self:PaintLimitedHEV(ply, x, y - ScreenSize(self.DEF_PADDING_ELEM) - h, true)
+		self:PaintLimitedFlashlight(ply, x, y, true)
 	end
 end
 
@@ -206,6 +219,8 @@ function BOREAL_ALYPH_HUD:PaintArmorRev1(x, y)
 
 	surface.SetDrawColor(col)
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetArmorFillage(), barHeight)
+
+	return barWidth
 end
 
 BOREAL_ALYPH_HUD.LAST_FULL_SUIT = 0
@@ -351,6 +366,56 @@ function BOREAL_ALYPH_HUD:PaintLimitedHEV(ply, x, y, revision)
 	end
 end
 
+BOREAL_ALYPH_HUD.LIMITED_FLASHLIGHT = GetConVar('sv_limited_flashlight')
+
+function BOREAL_ALYPH_HUD:PaintLimitedFlashlight(ply, x, y, revision)
+	if not x or not y then
+		x, y = POS_HEALTH()
+	end
+
+	local col = self.ArmorColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.ArmorColor.a)
+
+	local symbol = ply:FlashlightIsOn() and '©' or '®'
+
+	surface.SetFont(revision and self.ArmorCounterIcon.REGULAR or self.ArmorCounterIconREV0.REGULAR)
+	local _, h = surface.GetTextSize('*')
+
+	surface.SetFont(self.HEVFlashlightIcon.REGULAR)
+	local _, sh = surface.GetTextSize('©')
+
+	local padding = ScreenSize(self.DEF_PADDING)
+
+	surface.SetTextColor(col)
+	surface.SetTextPos(x, y + h + padding - sh * (revision and .7 or .8))
+	surface.DrawText(symbol)
+
+	if not self.LIMITED_FLASHLIGHT or not self.LIMITED_FLASHLIGHT:GetBool() then return end
+
+	local colI = (col * 50)
+
+	if revision then
+		h = h + ScreenSize(3)
+	end
+
+	local FLASHLIGHT_BARS = self.FLASHLIGHT_BARS
+	local FLASHLIGHT_BAR_WIDTH = ScreenSize(self.FLASHLIGHT_BAR_WIDTH)
+	local FLASHLIGHT_BAR_PADDING = ScreenSize(self.FLASHLIGHT_BAR_PADDING)
+	local FLASHLIGHT_BAR_HEIGHT = ScreenSize(self.FLASHLIGHT_BAR_HEIGHT)
+
+	local suit = (ply:GetFlashlightCharge()):floor()
+	if suit < 0 then return end
+
+	local step = 100 / FLASHLIGHT_BARS
+
+	local w = 0
+
+	for i = 1, FLASHLIGHT_BARS do
+		surface.SetDrawColor((suit >= i * step) and col or colI)
+		surface.DrawRect(x + w, y + h + padding, FLASHLIGHT_BAR_WIDTH, FLASHLIGHT_BAR_HEIGHT)
+		w = (w + FLASHLIGHT_BAR_WIDTH + FLASHLIGHT_BAR_PADDING):floor()
+	end
+end
+
 function BOREAL_ALYPH_HUD:PaintArmorRev0(x, y)
 	if not x or not y then
 		x, y = POS_HEALTH()
@@ -382,12 +447,14 @@ function BOREAL_ALYPH_HUD:PaintArmorRev0(x, y)
 
 	surface.SetDrawColor(col)
 	surface.DrawRect(x, y + h + padding, barWidth * self:GetArmorFillage(), barHeight)
+
+	return barWidth
 end
 
 BOREAL_ALYPH_HUD:AddFXPaintHook('PaintHealth')
 
 function BOREAL_ALYPH_HUD:LimitedHEVHUDShouldDraw(str)
-	if (str == 'LimitedHEVPower' or str == 'CHudSuitPower') and self.ENABLE_HEV_SUPPORT:GetBool() then return false end
+	if (str == 'LimitedHEVFlashlight' or str == 'LimitedHEVPower' or str == 'CHudSuitPower') and self.ENABLE_HEV_SUPPORT:GetBool() then return false end
 end
 
 BOREAL_ALYPH_HUD:AddHookCustom('HUDShouldDraw', 'LimitedHEVHUDShouldDraw')
