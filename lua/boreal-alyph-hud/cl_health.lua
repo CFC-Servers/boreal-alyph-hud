@@ -373,6 +373,8 @@ function BOREAL_ALYPH_HUD:PaintLimitedFlashlight(ply, x, y, revision)
 		x, y = POS_HEALTH()
 	end
 
+	local limited = self.LIMITED_FLASHLIGHT and self.LIMITED_FLASHLIGHT:GetBool()
+
 	local col = self.ArmorColor:ModifyAlpha(self.ENABLE_FX:GetBool() and 255 or self.ArmorColor.a)
 
 	local symbol = ply:FlashlightIsOn() and '©' or '®'
@@ -385,17 +387,23 @@ function BOREAL_ALYPH_HUD:PaintLimitedFlashlight(ply, x, y, revision)
 
 	local padding = ScreenSize(self.DEF_PADDING)
 
-	surface.SetTextColor(col)
-	surface.SetTextPos(x, y + h + padding - sh * (revision and .7 or .8))
-	surface.DrawText(symbol)
-
-	if not self.LIMITED_FLASHLIGHT or not self.LIMITED_FLASHLIGHT:GetBool() then return end
-
-	local colI = (col * 50)
+	local iconh = y + h + padding - sh * (revision and .7 or .8)
 
 	if revision then
 		h = h + ScreenSize(3)
 	end
+
+	if not limited then
+		iconh = y + h + padding + ScreenSize(self.BAR_DEF_HEIGHT) * .5 - sh * .55
+	end
+
+	surface.SetTextColor(col)
+	surface.SetTextPos(x, iconh)
+	surface.DrawText(symbol)
+
+	if not limited then return end
+
+	local colI = (col * 50)
 
 	local FLASHLIGHT_BARS = self.FLASHLIGHT_BARS
 	local FLASHLIGHT_BAR_WIDTH = ScreenSize(self.FLASHLIGHT_BAR_WIDTH)
